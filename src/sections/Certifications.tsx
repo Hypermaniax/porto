@@ -1,6 +1,8 @@
 import type { CSSProperties } from "react"
 import SectionHeading from "@/components/SectionHeading"
+import dict from "@/i18n/dict"
 import { accentColorClass, certifications, misprintColor } from "@/data/portfolio"
+import { useLang } from "@/i18n/use-lang"
 
 const ease = "ease-[cubic-bezier(0.32,0.72,0,1)]"
 
@@ -8,6 +10,8 @@ const tilt = ["rotate-[-1.1deg]", "rotate-[0.9deg]"]
 const offset = ["", "md:translate-y-6"]
 
 export default function Certifications() {
+  const { t } = useLang()
+
   return (
     <section
       className="relative overflow-hidden border-b-3 border-ink py-[clamp(64px,9vw,128px)]"
@@ -29,25 +33,25 @@ export default function Certifications() {
           tone="blue"
           title={
             <span className="[text-shadow:5px_5px_0_var(--pink)]">
-              EDUCATION
+              {t(dict.education.title)}
             </span>
           }
-          description="The fundamentals behind the work — computer science and engineering."
+          description={t(dict.education.description)}
           counter={String(certifications.length).padStart(2, "0")}
-          counterLabel="DEGREES"
+          counterLabel={t(dict.education.counterLabel)}
         />
 
         <div className="grid grid-flow-dense grid-cols-1 gap-8 md:grid-cols-2">
           {certifications.map((certification, index) => {
             return (
               <div
-                key={certification.title}
+                key={t(certification.title)}
                 data-reveal
                 style={{ transitionDelay: `${index * 90}ms` }}
                 className={`relative ${offset[index] ?? ""}`}
               >
                 <article
-                  aria-label={`${certification.title} — ${certification.issuer}`}
+                  aria-label={`${t(certification.title)} — ${certification.issuer}`}
                   style={
                     {
                       "--misprint": misprintColor[certification.color],
@@ -79,11 +83,11 @@ export default function Certifications() {
 
                   <div className="mt-auto flex flex-col gap-3 pt-6">
                     <h3 className="m-0 max-w-[20ch] font-display text-[clamp(24px,2.6vw,40px)] uppercase leading-[0.95] tracking-[-0.04em]">
-                      {certification.title}
+                      {t(certification.title)}
                     </h3>
                     <p className="m-0 flex flex-wrap items-center gap-x-3 gap-y-2 text-xs font-bold uppercase tracking-[0.06em]">
                       <span className="border-2 border-ink bg-white px-2 py-0.5 text-[10px] tracking-[0.1em] text-black shadow-hard-xs">
-                        AT
+                        {t(dict.education.at)}
                       </span>
                       {certification.issuer}
                     </p>

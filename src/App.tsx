@@ -5,25 +5,28 @@ import JsonLd from "@/components/JsonLd"
 import ScrollProgress from "@/components/ScrollProgress"
 import ScrollToTop from "@/components/ScrollToTop"
 import { Toaster } from "@/components/ui/toast"
+import dict from "@/i18n/dict"
 import { profile, socials } from "@/data/portfolio"
 import { useReveal } from "@/hooks/useReveal"
+import { useLang } from "@/i18n/use-lang"
 import CaseStudy from "@/pages/CaseStudy"
 import Home from "@/pages/Home"
 import NotFound from "@/pages/NotFound"
 import StyleGuide from "@/pages/StyleGuide"
 
-const personSchema = {
-  "@context": "https://schema.org",
-  "@type": "Person",
-  name: profile.name,
-  jobTitle: profile.role,
-  email: `mailto:${profile.email}`,
-  url: "https://nikoagustio.com/",
-  sameAs: socials.map((social) => social.href),
-}
-
 function App() {
+  const { lang } = useLang()
   useReveal()
+
+  const personSchema = {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    name: profile.name,
+    jobTitle: profile.role[lang],
+    email: `mailto:${profile.email}`,
+    url: "https://nikoagustio.com/",
+    sameAs: socials.map((social) => social.href),
+  }
 
   return (
     <div>
@@ -31,7 +34,7 @@ function App() {
         className="fixed left-2 top-2 z-[100] -translate-y-[150%] border-3 border-ink bg-yellow p-3 font-bold text-black focus:translate-y-0"
         href="#main"
       >
-        SKIP TO CONTENT
+        {dict.app.skipToContent[lang]}
       </a>
 
       <JsonLd data={personSchema} />

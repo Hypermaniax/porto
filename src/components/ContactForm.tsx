@@ -12,9 +12,12 @@ import {
   FieldGroup,
   FieldLabel,
 } from "@/components/ui/field"
+import dict from "@/i18n/dict"
+import type { L10n } from "@/i18n/use-lang"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { toast } from "@/components/ui/toast"
+import { useLang } from "@/i18n/use-lang"
 
 type Field_ = "name" | "email" | "message"
 type Values = Record<Field_, string>
@@ -25,18 +28,23 @@ const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
 const initialValues: Values = { name: "", email: "", message: "" }
 
-function validate(field: Field_, value: string): string | undefined {
+function validate(
+  field: Field_,
+  value: string,
+  t: (v: L10n) => string,
+): string | undefined {
   if (!value.trim()) {
-    if (field === "message") return "Tell me a little about your project."
-    return "This field is required."
+    if (field === "message") return t(dict.form.projectHint)
+    return t(dict.form.required)
   }
   if (field === "email" && !emailPattern.test(value)) {
-    return "Enter a valid email address."
+    return t(dict.form.emailInvalid)
   }
   return undefined
 }
 
 export default function ContactForm() {
+  const { t } = useLang()
   const [values, setValues] = useState<Values>(initialValues)
   const [errors, setErrors] = useState<Errors>({})
   const [status, setStatus] = useState<Status>("idle")
@@ -49,12 +57,12 @@ export default function ContactForm() {
   const handleChange = (field: Field_, value: string) => {
     setValues((prev) => ({ ...prev, [field]: value }))
     if (errors[field]) {
-      setErrors((prev) => ({ ...prev, [field]: validate(field, value) }))
+      setErrors((prev) => ({ ...prev, [field]: validate(field, value, t) }))
     }
   }
 
   const handleBlur = (field: Field_) => {
-    setErrors((prev) => ({ ...prev, [field]: validate(field, values[field]) }))
+    setErrors((prev) => ({ ...prev, [field]: validate(field, values[field], t) }))
   }
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
@@ -62,7 +70,7 @@ export default function ContactForm() {
 
     const nextErrors: Errors = {}
     ;(Object.keys(values) as Field_[]).forEach((field) => {
-      const error = validate(field, values[field])
+      const error = validate(field, values[field], t)
       if (error) nextErrors[field] = error
     })
     setErrors(nextErrors)
@@ -74,8 +82,8 @@ export default function ContactForm() {
       setStatus("sent")
       setValues(initialValues)
       toast.add({
-        title: "MESSAGE SENT — NICE!",
-        description: "Thanks! I got your message and will reply within a day.",
+        title: t(dict.form.toastTitle),
+        description: t(dict.form.toastDescription),
         type: "success",
       })
     }, 700)
@@ -101,11 +109,11 @@ export default function ContactForm() {
     >
       <FieldGroup>
         <Field data-invalid={Boolean(errors.name)}>
-          <FieldLabel htmlFor="name">YOUR NAME</FieldLabel>
+          <FieldLabel htmlFor="name">{t(dict.form.name)}</FieldLabel>
           <Input
             {...changeProps("name")}
             className="aria-invalid:border-red-500"
-            placeholder="TYPE IT HERE..."
+            placeholder={t(dict.form.namePlaceholder)}
           />
           {errors.name && (
             <FieldError id="name-error">{errors.name}</FieldError>
@@ -113,12 +121,12 @@ export default function ContactForm() {
         </Field>
 
         <Field data-invalid={Boolean(errors.email)}>
-          <FieldLabel htmlFor="email">YOUR EMAIL</FieldLabel>
+          <FieldLabel htmlFor="email">{t(dict.form.email)}</FieldLabel>
           <Input
             {...changeProps("email")}
             className="aria-invalid:border-red-500"
             type="email"
-            placeholder="YOU@EMAIL.COM"
+            placeholder={t(dict.form.emailPlaceholder)}
           />
           {errors.email && (
             <FieldError id="email-error">{errors.email}</FieldError>
@@ -126,12 +134,12 @@ export default function ContactForm() {
         </Field>
 
         <Field data-invalid={Boolean(errors.message)}>
-          <FieldLabel htmlFor="message">YOUR MESSAGE</FieldLabel>
+          <FieldLabel htmlFor="message">{t(dict.form.message)}</FieldLabel>
           <Textarea
             {...changeProps("message")}
             className="aria-invalid:border-red-500"
             rows={4}
-            placeholder="TELL ME EVERYTHING..."
+            placeholder={t(dict.form.messagePlaceholder)}
           />
           {errors.message && (
             <FieldError id="message-error">{errors.message}</FieldError>
@@ -140,12 +148,12 @@ export default function ContactForm() {
 
         <Button type="submit" variant="black" disabled={status === "sending"}>
           {status === "sending" ? (
-            "SENDING..."
+            t(dict.form.sending)
           ) : status === "sent" ? (
-            "MESSAGE SENT — NICE!"
+            t(dict.form.sent)
           ) : (
             <>
-              SEND MESSAGE <span aria-hidden="true">↗</span>
+              {t(dict.form.send)} <span aria-hidden="true">↗</span>
             </>
           )}
         </Button>

@@ -2,6 +2,8 @@ import type { CSSProperties } from "react"
 import Button from "@/components/Button"
 import SectionHeading from "@/components/SectionHeading"
 import { Badge } from "@/components/ui/badge"
+import dict from "@/i18n/dict"
+import { useLang } from "@/i18n/use-lang"
 import {
   aboutInfo,
   aboutParagraphs,
@@ -25,6 +27,8 @@ const termAccent = [
 ]
 
 export default function About() {
+  const { t } = useLang()
+
   return (
     <section
       className="relative overflow-hidden border-b-3 border-ink py-[clamp(64px,9vw,128px)]"
@@ -46,21 +50,21 @@ export default function About() {
           tone="blue"
           title={
             <>
-              FULLSTACK, FROM{" "}
+              {t(dict.about.titlePart1)}
               <span className="[text-shadow:5px_5px_0_var(--blue)]">
-                DATABASE
-              </span>{" "}
-              TO UI
+                {t(dict.about.titleAccent)}
+              </span>
+              {t(dict.about.titlePart2)}
             </>
           }
-          description="Part builder, part problem-solver. I care about code that stays clear, fast, and maintainable."
+          description={t(dict.about.description)}
         />
 
         <ul className="mb-[clamp(44px,6vw,80px)] grid list-none grid-cols-3 gap-5 p-0 max-mob:grid-cols-1">
           {stats.map((stat, index) => {
             const accent = statAccent[index % statAccent.length]
             return (
-              <li key={stat.label} data-reveal>
+              <li key={stat.value} data-reveal>
                 <div
                   style={
                     { "--misprint": misprintColor[accent] } as CSSProperties
@@ -77,7 +81,7 @@ export default function About() {
                     {stat.value}
                   </strong>
                   <span className="mt-4 text-[11px] font-bold uppercase tracking-[0.08em]">
-                    {stat.label}
+                    {t(stat.label)}
                   </span>
                 </div>
               </li>
@@ -111,47 +115,47 @@ export default function About() {
               />
 
               <span className="absolute bottom-5 left-5 inline-block -rotate-3 border-3 border-ink bg-surface px-3 py-2 text-[11px] font-bold uppercase tracking-[0.1em] shadow-hard-xs">
-                Nice to meet you
+                {t(dict.about.meetYou)}
               </span>
             </div>
             <p className="mt-6 text-[9px] font-bold">
-              FIG. 02 — {profile.photoCredit}
+              FIG. 02 — {t(profile.photoCredit)}
             </p>
           </div>
 
           <div className="flex flex-col gap-6" data-reveal>
             <p className="m-0 font-display text-[clamp(28px,3.4vw,52px)] font-bold leading-[1.02] tracking-[-0.05em]">
-              I BUILD WEB APPS{" "}
+              {t(dict.about.statementLead)}{" "}
               <mark className="inline-block -rotate-1 border-2 border-ink bg-blue px-2 text-white shadow-hard-xs">
-                END TO END
+                {t(dict.about.statementMark)}
               </mark>{" "}
-              — FROM DATABASE AND API TO THE INTERFACE PEOPLE USE.
+              {t(dict.about.statementTrailing)}
             </p>
             {aboutParagraphs.map((paragraph) => (
               <p
                 className="m-0 max-w-[60ch] text-[15px] leading-[1.65]"
-                key={paragraph}
+                key={paragraph.en}
               >
-                {paragraph}
+                {t(paragraph)}
               </p>
             ))}
 
             <div className="relative mt-1 rotate-[0.6deg]">
               <span className="absolute -top-3 left-6 z-10 inline-block -rotate-2 border-2 border-ink bg-ink px-3 py-1 text-[10px] font-bold uppercase tracking-[0.14em] text-panel-foreground shadow-hard-xs">
-                Quick facts
+                {t(dict.about.quickFacts)}
               </span>
               <dl className="m-0 grid grid-cols-2 border-3 border-ink bg-surface shadow-[10px_10px_0_var(--pink)] max-mob:grid-cols-1 [&>div:nth-child(even)]:border-l-3 [&>div:nth-child(even)]:border-ink [&>div:nth-child(n+3)]:border-t-3 [&>div:nth-child(n+3)]:border-ink max-mob:[&>div:nth-child(even)]:border-l-0 max-mob:[&>div+div]:border-t-3 max-mob:[&>div+div]:border-ink">
                 {aboutInfo.map((info, index) => (
-                  <div key={info.term} className="p-5 pt-7">
+                  <div key={info.term.en} className="p-5 pt-7">
                     <dt
                       className={`inline-block border-2 border-ink px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.08em] shadow-hard-xs ${
                         termAccent[index % termAccent.length]
                       }`}
                     >
-                      {info.term}
+                      {t(info.term)}
                     </dt>
                     <dd className="mt-2.5 break-words font-display text-[clamp(14px,1.4vw,18px)] font-bold">
-                      {info.detail}
+                      {t(info.detail)}
                     </dd>
                   </div>
                 ))}
@@ -174,7 +178,7 @@ export default function About() {
             </div>
 
             <Button href="#contact" variant="black">
-              MORE ABOUT ME <span aria-hidden="true">↗</span>
+              {t(dict.about.moreAbout)} <span aria-hidden="true">↗</span>
             </Button>
           </div>
         </div>

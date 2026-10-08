@@ -2,14 +2,17 @@ import AvailableBadge from "@/components/AvailableBadge"
 import Button from "@/components/Button"
 import Marquee from "@/components/ui/marquee"
 import TechLogo from "@/components/TechLogo"
+import dict from "@/i18n/dict"
 import { marqueeItems, profile } from "@/data/portfolio"
 import type { TechSlug } from "@/data/tech-logos"
+import { useLang } from "@/i18n/use-lang"
 
 const heroStack: TechSlug[] = ["laravel", "vuejs", "typescript", "nextdotjs"]
 
 const ease = "ease-[cubic-bezier(0.32,0.72,0,1)]"
 
 export default function Hero() {
+  const { t } = useLang()
   return (
     <section className="relative overflow-hidden" id="hero">
       <span
@@ -26,7 +29,7 @@ export default function Hero() {
         aria-hidden="true"
         className="absolute left-4 top-1/2 -translate-y-1/2 rotate-180 text-[11px] font-bold uppercase tracking-[0.34em] opacity-40 [writing-mode:vertical-rl] max-tab:hidden"
       >
-        Fullstack Developer · Portfolio 2026
+        {t(dict.hero.verticalLabel)}
       </span>
 
       <div className="relative z-10 mx-auto grid w-full max-w-[1240px] grid-cols-[1.05fr_0.95fr] items-center gap-[clamp(32px,5vw,72px)] px-(--pad) py-[clamp(40px,7vw,96px)_clamp(36px,5vw,72px)] max-tab:grid-cols-1">
@@ -48,13 +51,13 @@ export default function Hero() {
             className="animate-hero-rise mb-3 font-mono text-[10px] font-bold uppercase tracking-[0.22em] opacity-60"
             style={{ animationDelay: "40ms" }}
           >
-            [ 001 — Fullstack Developer / 2026 ]
+            {t(dict.hero.eyebrow)}
           </p>
 
           <h1 className="animate-hero-rise m-0 flex -rotate-[0.8deg] flex-col items-start font-display text-[clamp(50px,8.6vw,116px)] font-bold leading-[0.86] tracking-[-0.06em] max-mob:text-[clamp(44px,15vw,68px)]">
             <span className="mb-2.5 flex w-fit items-center gap-2.5 border-2 border-ink bg-main px-3 py-1 text-[0.24em] tracking-[0.1em] text-black shadow-hard-xs">
               <span aria-hidden="true" className="inline-block size-2.5 bg-pink" />
-              HELLO! I&rsquo;M
+              {t(dict.hero.greeting)}
             </span>
             <span className="relative inline-block pb-[0.08em] [text-shadow:6px_6px_0_var(--blue)] after:absolute after:bottom-0 after:left-0 after:right-[0.1em] after:h-[10px] after:bg-pink after:content-[''] max-mob:after:h-[7px]">
               {profile.name.toUpperCase()}
@@ -65,22 +68,22 @@ export default function Hero() {
             className="animate-hero-rise mt-[30px] text-[clamp(15px,1.5vw,19px)] font-bold leading-[1.5]"
             style={{ animationDelay: "120ms" }}
           >
-            A{" "}
+            {t(dict.hero.introLead)}{" "}
             <span className="inline-block -rotate-1 border-2 border-ink bg-yellow px-2 py-0.5 text-black shadow-hard-xs">
-              FULLSTACK DEVELOPER
+              {t(profile.role).toUpperCase()}
             </span>{" "}
-            BUILDING THINGS FOR THE WEB.
+            {t(dict.hero.introTrailing)}
           </p>
 
           <p
             className="animate-hero-rise mt-5 max-w-[52ch] text-[clamp(14px,1.15vw,17px)] leading-[1.6]"
             style={{ animationDelay: "200ms" }}
           >
-            I BUILD{" "}
+            {t(dict.hero.pitchLead)}{" "}
             <span className="inline-block rotate-1 bg-main px-1.5 text-main-foreground shadow-hard-xs">
               RESTFUL APIS
             </span>{" "}
-            AND RESPONSIVE INTERFACES PEOPLE ACTUALLY USE.
+            {t(dict.hero.pitchTrailing)}
           </p>
 
           <div
@@ -88,7 +91,7 @@ export default function Hero() {
             style={{ animationDelay: "280ms" }}
           >
             <Button href="#work" className="group -rotate-1 gap-3 pl-6 pr-3">
-              VIEW MY WORK
+              {t(dict.hero.viewWork)}
               <span
                 aria-hidden="true"
                 className={`grid size-7 place-items-center border-2 border-black bg-white text-black transition-transform duration-300 ${ease} group-hover:translate-x-0.5 group-hover:translate-y-0.5`}
@@ -101,7 +104,7 @@ export default function Hero() {
               variant="paper"
               className="group rotate-1 gap-3 pl-6 pr-3"
             >
-              REQUEST CV
+              {t(dict.hero.requestCv)}
               <span
                 aria-hidden="true"
                 className={`grid size-7 place-items-center border-2 border-black bg-yellow text-black transition-transform duration-300 ${ease} group-hover:-translate-y-0.5 group-hover:translate-x-0.5`}
@@ -120,7 +123,7 @@ export default function Hero() {
                 <span className="absolute inline-flex size-full animate-ping rounded-full bg-mint opacity-70" />
                 <span className="relative inline-flex size-2.5 rounded-full border-2 border-ink bg-mint" />
               </span>
-              AVAILABLE FOR NEW WORK
+              {t(dict.hero.available)}
             </span>
             <span aria-hidden="true" className="opacity-40">
               /
@@ -151,7 +154,7 @@ export default function Hero() {
                 <img
                   className="block h-[clamp(360px,44vw,600px)] w-full object-cover"
                   src={profile.photo}
-                  alt={`Portrait of ${profile.name}`}
+                  alt={`${t(dict.hero.portraitAlt)} ${profile.name}`}
                 />
               </div>
             </div>
@@ -173,7 +176,7 @@ export default function Hero() {
               style={{ animationDelay: "580ms" }}
             >
               <span className="block text-[9px] font-bold uppercase tracking-[0.16em] opacity-70">
-                BASED IN
+                {t(dict.hero.basedIn)}
               </span>
               <span className="block font-display text-sm font-bold leading-tight">
                 {profile.location}
@@ -215,7 +218,7 @@ export default function Hero() {
               className="h-8 w-24 shrink-0 [background-image:repeating-linear-gradient(90deg,var(--ink)_0_2px,transparent_2px_4px,var(--ink)_4px_5px,transparent_5px_9px)]"
             />
             <p className="text-[10px] font-bold uppercase tracking-[0.08em] opacity-70">
-              FIG. 01 — {profile.photoCredit}
+              FIG. 01 — {t(profile.photoCredit)}
             </p>
           </div>
         </div>

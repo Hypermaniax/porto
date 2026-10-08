@@ -2,6 +2,7 @@ import { useMemo, useState, type CSSProperties } from "react"
 import SectionHeading from "@/components/SectionHeading"
 import TechLogo from "@/components/TechLogo"
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
+import dict from "@/i18n/dict"
 import {
   accentColorClass,
   misprintColor,
@@ -9,38 +10,44 @@ import {
   techStack,
   type TechCategory,
 } from "@/data/portfolio"
+import { useLang, type L10n } from "@/i18n/use-lang"
 
 type Filter = "ALL" | TechCategory
 
 const ease = "ease-[cubic-bezier(0.32,0.72,0,1)]"
 
-const filterConfig: { value: Filter; dot: string; active: string }[] = [
+const filterConfig: { value: Filter; label: L10n; dot: string; active: string }[] = [
   {
     value: "ALL",
+    label: dict.stack.filterAll,
     dot: "bg-ink",
     active:
       "aria-pressed:bg-ink aria-pressed:text-panel-foreground data-pressed:bg-ink data-pressed:text-panel-foreground",
   },
   {
     value: "FRONTEND",
+    label: { en: "FRONTEND", id: "FRONTEND" },
     dot: "bg-blue",
     active:
       "aria-pressed:bg-blue aria-pressed:text-white data-pressed:bg-blue data-pressed:text-white",
   },
   {
     value: "BACKEND",
+    label: { en: "BACKEND", id: "BACKEND" },
     dot: "bg-mint",
     active:
       "aria-pressed:bg-mint aria-pressed:text-black data-pressed:bg-mint data-pressed:text-black",
   },
   {
     value: "DATABASE",
+    label: { en: "DATABASE", id: "DATABASE" },
     dot: "bg-yellow",
     active:
       "aria-pressed:bg-yellow aria-pressed:text-black data-pressed:bg-yellow data-pressed:text-black",
   },
   {
     value: "TOOLS",
+    label: { en: "TOOLS", id: "TOOLS" },
     dot: "bg-pink",
     active:
       "aria-pressed:bg-pink aria-pressed:text-black data-pressed:bg-pink data-pressed:text-black",
@@ -53,6 +60,7 @@ const tileTilt = ["rotate-[-1.1deg]", "rotate-[0.9deg]"]
 const plaqueTilt = ["-rotate-3", "rotate-2"]
 
 export default function TechStack() {
+  const { t } = useLang()
   const [filter, setFilter] = useState<Filter>("ALL")
 
   const counts = useMemo(() => {
@@ -92,15 +100,16 @@ export default function TechStack() {
           tone="mint"
           title={
             <>
-              MY DAILY{" "}
+              {t(dict.stack.titlePart1)}
               <span className="[text-shadow:5px_5px_0_var(--mint)]">
-                TOOLBOX
+                {t(dict.stack.titleAccent)}
               </span>
+              {t(dict.stack.titlePart2)}
             </>
           }
-          description="Languages, frameworks, and tools I use to take a project from first sketch all the way to deploy."
+          description={t(dict.stack.description)}
           counter={String(items.length).padStart(2, "0")}
-          counterLabel="TOOLS"
+          counterLabel={t(dict.stack.counterLabel)}
         />
 
         <div className="mb-10 border-b-3 border-ink pb-6" data-reveal>
@@ -112,9 +121,9 @@ export default function TechStack() {
             }}
             variant="outline"
             className="flex flex-wrap gap-2.5 max-mob:flex-nowrap max-mob:overflow-x-auto max-mob:pb-1.5"
-            aria-label="Filter tech stack"
+            aria-label={t(dict.stack.filterAria)}
           >
-            {filterConfig.map(({ value, dot, active }) => (
+            {filterConfig.map(({ value, label, dot, active }) => (
               <ToggleGroupItem
                 key={value}
                 value={value}
@@ -124,14 +133,14 @@ export default function TechStack() {
                   aria-hidden="true"
                   className={`inline-block size-2.5 border-2 border-ink ${dot}`}
                 />
-                {value}
+                {t(label)}
                 <span
                   aria-hidden="true"
                   className="font-mono text-[10px] tabular-nums opacity-60"
                 >
                   {String(counts[value]).padStart(2, "0")}
                 </span>
-                <span className="sr-only">{counts[value]} tools</span>
+                <span className="sr-only">{counts[value]} {t(dict.stack.countAll)}</span>
               </ToggleGroupItem>
             ))}
           </ToggleGroup>

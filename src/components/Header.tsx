@@ -1,5 +1,6 @@
 import { Link, useLocation } from "react-router-dom"
 import Button from "@/components/Button"
+import LanguageToggle from "@/components/LanguageToggle"
 import ThemeToggle from "@/components/ThemeToggle"
 import {
   Sheet,
@@ -10,23 +11,19 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet"
+import dict from "@/i18n/dict"
 import { navItems, profile, socials } from "@/data/portfolio"
+import { useLang } from "@/i18n/use-lang"
 import { useScrollSpy } from "@/hooks/useScrollSpy"
 
-const sectionIds = navItems.map((item) => item.toLowerCase())
-
-const menuTicker = [
-  "OPEN FOR NEW WORK",
-  "LET'S BUILD SOMETHING",
-  "FULLSTACK DEVELOPER",
-  "GMT+7",
-  "DATABASE → API → UI",
-]
+const sectionIds = navItems.map((item) => item.id)
 
 export default function Header() {
   const { pathname } = useLocation()
+  const { lang, t } = useLang()
   const isHome = pathname === "/"
   const activeId = useScrollSpy(sectionIds, isHome)
+  const menuTicker = dict.menu.ticker[lang]
 
   return (
     <header className="sticky top-3 z-50 px-(--pad) max-mob:top-2">
@@ -51,14 +48,14 @@ export default function Header() {
 
         <nav
           className="flex justify-center gap-1 max-mob:hidden"
-          aria-label="Primary navigation"
+          aria-label={t(dict.header.primaryNav)}
         >
           {navItems.map((item, index) => {
-            const id = item.toLowerCase()
+            const id = item.id
             const isActive = isHome && activeId === id
             return (
               <Link
-                key={item}
+                key={item.id}
                 to={`/#${id}`}
                 aria-current={isActive ? "true" : undefined}
                 className={
@@ -73,19 +70,20 @@ export default function Header() {
                 >
                   {String(index + 1).padStart(2, "0")}
                 </span>
-                {item}
+                {t(item.label)}
               </Link>
             )
           })}
         </nav>
 
         <div className="flex items-center justify-self-end gap-3 max-mob:gap-2">
+          <LanguageToggle className="max-mob:hidden" />
           <ThemeToggle className="max-mob:hidden" />
 
           <Sheet>
             <SheetTrigger
               className="group flex size-12 cursor-pointer flex-col items-center justify-center gap-2 border-3 border-ink bg-yellow transition-colors hover:bg-ink max-mob:size-11"
-              aria-label="Open menu"
+              aria-label={t(dict.header.openMenu)}
             >
               <span className="h-[3px] w-[24px] bg-black transition-all group-hover:bg-yellow group-data-[popup-open]:translate-y-[5.5px] group-data-[popup-open]:rotate-45" />
               <span className="h-[3px] w-[24px] bg-black transition-all group-hover:bg-yellow group-data-[popup-open]:-translate-y-[5.5px] group-data-[popup-open]:-rotate-45" />
@@ -97,8 +95,8 @@ export default function Header() {
               className="w-full! max-w-none! gap-0! border-0! bg-main p-0 text-black sm:max-w-none!"
             >
               <SheetHeader className="sr-only">
-                <SheetTitle>Menu</SheetTitle>
-                <SheetDescription>Primary navigation</SheetDescription>
+                <SheetTitle>{dict.header.menuTitle[lang]}</SheetTitle>
+                <SheetDescription>{t(dict.header.primaryNav)}</SheetDescription>
               </SheetHeader>
 
               <div className="relative flex h-full flex-1 flex-col overflow-hidden">
@@ -121,7 +119,7 @@ export default function Header() {
                     <ThemeToggle />
                     <SheetClose
                       className="grid size-12 cursor-pointer place-items-center border-3 border-black bg-transparent transition-colors hover:bg-black hover:text-yellow"
-                      aria-label="Close menu"
+                      aria-label={t(dict.header.closeMenu)}
                     >
                       <span className="font-display text-2xl leading-none">✕</span>
                     </SheetClose>
@@ -135,14 +133,14 @@ export default function Header() {
 
                 <nav
                   className="relative z-10 flex flex-1 flex-col justify-center px-5 sm:px-10"
-                  aria-label="Primary navigation"
+                  aria-label={t(dict.header.primaryNav)}
                 >
                   {navItems.map((item, index) => {
-                    const id = item.toLowerCase()
+                    const id = item.id
                     const isActive = isHome && activeId === id
                     return (
                       <SheetClose
-                        key={item}
+                        key={item.id}
                         render={
                           <Link
                             to={`/#${id}`}
@@ -161,7 +159,7 @@ export default function Header() {
                           {String(index + 1).padStart(2, "0")}
                         </span>
                         <span className="font-display text-[clamp(40px,12vw,104px)] font-bold uppercase leading-[0.9] tracking-[-0.055em]">
-                          {item}
+                          {t(item.label)}
                         </span>
                         <span
                           aria-hidden="true"
@@ -228,7 +226,7 @@ export default function Header() {
           </Sheet>
 
           <Button to="/#contact" className="-rotate-1 max-mob:hidden">
-            HIRE ME <span aria-hidden="true">↗</span>
+            {t(dict.header.hireMe)} <span aria-hidden="true">↗</span>
           </Button>
         </div>
       </div>
