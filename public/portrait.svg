@@ -1,9 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 1200" role="img" aria-label="Placeholder portrait">
-  <rect width="900" height="1200" fill="#2b50ff" />
-  <g stroke="#000000" stroke-width="14">
-    <circle cx="450" cy="470" r="220" fill="#ff3d81" />
-    <path d="M150 1200 Q450 840 750 1200 Z" fill="#00e0a4" />
-  </g>
-  <text x="450" y="520" text-anchor="middle" font-family="monospace" font-size="210" font-weight="700" fill="#000000">NA</text>
-  <text x="450" y="770" text-anchor="middle" font-family="monospace" font-size="40" font-weight="700" fill="#ffe600" letter-spacing="4">PHOTO PLACEHOLDER</text>
-</svg>

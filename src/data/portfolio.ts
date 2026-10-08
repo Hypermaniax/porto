@@ -17,10 +17,10 @@ export const profile = {
     en: "I build web apps end to end — database, API, and interface.",
     id: "Aku membangun aplikasi web end to end — database, API, dan antarmuka.",
   } satisfies L10n,
-  photo: "/portrait.svg",
+  photo: "/portrait.png",
   photoCredit: {
-    en: "PLACEHOLDER — SWAP IN YOUR OWN PORTRAIT",
-    id: "PLACEHOLDER — GANTI DENGAN FOTOMU SENDIRI",
+    en: "PERSONAL PORTRAIT",
+    id: "POTRET PRIBADI",
   } satisfies L10n,
 }
 
