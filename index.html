@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Niko Agustio — fullstack developer building modern web apps with Laravel, Node.js, React, and Next.js."
+    />
+    <meta name="theme-color" content="#e5e8e2" />
+    <meta name="author" content="Niko Agustio" />
+    <link rel="canonical" href="https://nikoagustio.com/" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Niko Agustio" />
+    <meta
+      property="og:title"
+      content="Niko Agustio — Fullstack Developer"
+    />
+    <meta
+      property="og:description"
+      content="Fullstack developer building modern web apps with Laravel, Node.js, React, and Next.js."
+    />
+    <meta property="og:url" content="https://nikoagustio.com/" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta
+      name="twitter:title"
+      content="Niko Agustio — Fullstack Developer"
+    />
+    <meta
+      name="twitter:description"
+      content="Fullstack developer building modern web apps with Laravel, Node.js, React, and Next.js."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Space+Mono:wght@400;700&display=swap"
+    />
+    <title>Niko Agustio — Fullstack Developer</title>
+    <script>
+      (function () {
+        try {
+          var stored = localStorage.getItem("theme")
+          var dark =
+            stored === "dark" ||
+            (!stored &&
+              window.matchMedia("(prefers-color-scheme: dark)").matches)
+          if (dark) document.documentElement.classList.add("dark")
+        } catch (error) {
+          /* ignore */
+        }
+      })()
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
