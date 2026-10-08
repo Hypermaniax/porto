@@ -9,7 +9,30 @@ const rootByType: Record<ProjectVisualType, string> = {
   booking: "",
 }
 
-export default function ProjectVisual({ type }: { type: ProjectVisualType }) {
+export default function ProjectVisual({
+  type,
+  image,
+}: {
+  type: ProjectVisualType
+  image?: string
+}) {
+  if (image) {
+    return (
+      <div className="relative h-full min-h-[280px] w-full overflow-hidden [aspect-ratio:3/2] max-mob:min-h-[230px]">
+        <img
+          src={image}
+          alt=""
+          loading="lazy"
+          className="h-full w-full object-cover grayscale contrast-[1.08] transition-[filter] duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] group-hover:grayscale-0"
+        />
+        <span
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 bg-[var(--misprint)] opacity-25 mix-blend-multiply transition-[opacity] duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] group-hover:opacity-0"
+        />
+      </div>
+    )
+  }
+
   return (
     <div
       className={cn(

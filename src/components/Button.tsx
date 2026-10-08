@@ -47,6 +47,7 @@ export default function Button({
       <UIButton
         variant={preset.ui}
         className={merged}
+        nativeButton={false}
         render={<Link to={to} />}
       >
         {children}
@@ -59,6 +60,7 @@ export default function Button({
       <UIButton
         variant={preset.ui}
         className={merged}
+        nativeButton={false}
         render={<a href={href} download={download} />}
       >
         {children}

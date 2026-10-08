@@ -53,7 +53,7 @@ export default function Services() {
               <div
                 key={t(service.title)}
                 data-reveal
-                className={`relative ${
+                className={`group relative ${
                   wide ? "md:col-span-6" : "md:col-span-3"
                 } ${offset[index]}`}
               >
@@ -63,7 +63,7 @@ export default function Services() {
                       "--misprint": misprintColor[service.color],
                     } as CSSProperties
                   }
-                  className={`${accentColorClass[service.color]} group relative flex h-full flex-col overflow-hidden border-3 border-ink p-[clamp(22px,2.6vw,40px)] transition-[rotate,translate,box-shadow] duration-200 ${ease} ${tilt[index]} [box-shadow:10px_10px_0_var(--misprint)] hover:-translate-x-1 hover:-translate-y-1 hover:rotate-0 hover:[box-shadow:18px_18px_0_var(--misprint)]`}
+                  className={`${accentColorClass[service.color]} relative flex h-full flex-col overflow-hidden border-3 border-ink p-[clamp(22px,2.6vw,40px)] transition-[rotate,translate,box-shadow] duration-200 ${ease} ${tilt[index]} [box-shadow:10px_10px_0_var(--misprint)] group-hover:-translate-x-1 group-hover:-translate-y-1 group-hover:rotate-0 group-hover:[box-shadow:18px_18px_0_var(--misprint)]`}
                 >
                   <span
                     aria-hidden="true"

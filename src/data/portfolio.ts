@@ -207,6 +207,7 @@ export type ProjectMetric = { value: string; label: L10n }
 export type ProjectGalleryItem = {
   visual: ProjectVisual
   caption: L10n
+  image?: string
 }
 
 export type Project = {
@@ -224,6 +225,7 @@ export type Project = {
   color: AccentColor
   visual: ProjectVisual
   category: ProjectCategory
+  image?: string
   liveUrl?: string
   repoUrl?: string
   challenge: L10n
@@ -381,21 +383,22 @@ export const projects: Project[] = [
       id: "Sistem booking tiket terjadwal dengan konfirmasi WhatsApp.",
     },
     summary: {
-      en: "A team-built ticket booking system with scheduled slots, WhatsApp-based confirmation, and RESTful CRUD APIs, shipped with a responsive JavaScript and Tailwind UI.",
-      id: "Sistem booking tiket karya tim dengan slot terjadwal, konfirmasi berbasis WhatsApp, dan RESTful CRUD API, dirilis dengan UI JavaScript dan Tailwind yang responsif.",
+      en: "A team-built ticket booking system with scheduled slots, WhatsApp-based confirmation, and RESTful CRUD APIs, built with Next.js and Tailwind CSS on a Prisma data layer.",
+      id: "Sistem booking tiket karya tim dengan slot terjadwal, konfirmasi berbasis WhatsApp, dan RESTful CRUD API, dibangun dengan Next.js dan Tailwind CSS di atas layer data Prisma.",
     },
     year: "2024",
     role: { en: "Frontend Developer", id: "Pengembang Frontend" },
     timeline: "Jun 2024 · Team project",
-    tags: ["JAVASCRIPT", "TAILWIND", "JWT", "REST API"],
-    stack: ["javascript", "tailwindcss", "mongodb", "vercel"],
+    tags: ["NEXT.JS", "TAILWIND", "PRISMA", "REST API"],
+    stack: ["nextdotjs", "tailwindcss", "prisma", "vercel"],
     status: "LIVE",
     color: "pink",
     visual: "booking",
     category: "FRONTEND",
+    image: "/images/ticket-hero.jpg",
     challenge: {
-      en: "Bookings were being confirmed manually over chat, which was error-prone and hard to scale. The team needed a simple system to schedule tickets and confirm them automatically.",
-      id: "Booking dikonfirmasi manual lewat chat, rawan salah dan sulit dikembangkan. Tim butuh sistem sederhana untuk menjadwalkan tiket dan mengonfirmasinya secara otomatis.",
+      en: "Bookings were being confirmed manually over chat, which was error-prone and hard to scale. The team needed a simple system to schedule tickets and confirm them automatically.\n\nTraffic spikes around popular sessions made it clear the booking flow had to stay reliable under load. Every slot, ticket, and confirmation had to stay in sync — no double bookings, no lost reservations.\n\nOn top of that, the confirmation experience had to feel instant and familiar, so guests could trust the system without changing how they already booked.",
+      id: "Booking dikonfirmasi manual lewat chat, rawan salah dan sulit dikembangkan. Tim butuh sistem sederhana untuk menjadwalkan tiket dan mengonfirmasinya secara otomatis.\n\nLonjakan trafik di sesi populer membuat alur booking wajib tetap andal saat beban tinggi. Setiap slot, tiket, dan konfirmasi harus sinkron — tanpa double booking, tanpa reservasi hilang.\n\nSelain itu, pengalaman konfirmasi harus terasa instan dan familiar, supaya tamu bisa percaya tanpa mengubah cara mereka memesan.",
     },
     approach: [
       {
@@ -407,12 +410,12 @@ export const projects: Project[] = [
         id: "Mengintegrasikan alur konfirmasi berbasis WhatsApp ke dalam proses booking.",
       },
       {
-        en: "Connected RESTful APIs for CRUD operations and JWT authentication with MongoDB.",
-        id: "Menghubungkan RESTful API untuk operasi CRUD dan autentikasi JWT dengan MongoDB.",
+        en: "Connected RESTful endpoints for CRUD operations, backed by Prisma as the data layer.",
+        id: "Menghubungkan RESTful endpoint untuk operasi CRUD, dengan Prisma sebagai layer data.",
       },
       {
-        en: "Built the responsive interface in JavaScript and Tailwind CSS, deployed on Vercel.",
-        id: "Membangun antarmuka responsif dengan JavaScript dan Tailwind CSS, di-deploy di Vercel.",
+        en: "Built the responsive interface with Next.js and Tailwind CSS, deployed on Vercel.",
+        id: "Membangun antarmuka responsif dengan Next.js dan Tailwind CSS, di-deploy di Vercel.",
       },
     ],
     outcome: {
@@ -421,7 +424,7 @@ export const projects: Project[] = [
     },
     metrics: [
       { value: "Team", label: { en: "collaboration", id: "kolaborasi" } },
-      { value: "JWT", label: { en: "authentication", id: "autentikasi" } },
+      { value: "Prisma", label: { en: "data layer", id: "layer data" } },
       { value: "WA", label: { en: "confirmation flow", id: "alur konfirmasi" } },
     ],
     gallery: [
@@ -431,6 +434,7 @@ export const projects: Project[] = [
           en: "Scheduled ticket flow",
           id: "Alur tiket terjadwal",
         },
+        image: "/images/ticket-gallery-1.jpg",
       },
       {
         visual: "dashboard",
@@ -438,6 +442,7 @@ export const projects: Project[] = [
           en: "Booking overview",
           id: "Ringkasan booking",
         },
+        image: "/images/ticket-gallery-2.jpg",
       },
     ],
   },

@@ -141,6 +141,7 @@ export default function Header() {
                     return (
                       <SheetClose
                         key={item.id}
+                        nativeButton={false}
                         render={
                           <Link
                             to={`/#${id}`}

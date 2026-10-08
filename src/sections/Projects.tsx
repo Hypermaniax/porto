@@ -1,8 +1,11 @@
 import { useMemo, useState, type CSSProperties } from "react"
+import { Link } from "react-router-dom"
 import { StackContainer, StackCard } from "stack-on-scroll"
 import Button from "@/components/Button"
 import ProjectVisual from "@/components/ProjectVisual"
 import SectionHeading from "@/components/SectionHeading"
+import StatusStamp from "@/components/StatusStamp"
+import TapeMarquee from "@/components/TapeMarquee"
 import TechLogo from "@/components/TechLogo"
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
 import dict from "@/i18n/dict"
@@ -13,9 +16,9 @@ import {
   misprintColor,
   projects,
   socials,
+  profile,
   type Project,
   type ProjectCategory,
-  type ProjectStatus,
 } from "@/data/portfolio"
 import { techLogos } from "@/data/tech-logos"
 
@@ -89,25 +92,6 @@ function LockIcon() {
   )
 }
 
-function StatusStamp({ status }: { status: ProjectStatus }) {
-  return (
-    <span
-      aria-hidden="true"
-      className={`absolute right-4 top-2 z-[5] -rotate-12 select-none border-[3.5px] border-current px-2.5 py-1 font-mono text-[clamp(13px,1.35vw,21px)] font-bold uppercase leading-none tracking-[0.2em] opacity-50 transition-[rotate,opacity] duration-300 ${ease} group-hover:-rotate-6 group-hover:opacity-75`}
-      style={{
-        WebkitMaskImage:
-          "radial-gradient(3px 3px at 2px 2px, transparent 92%, black 100%)",
-        WebkitMaskSize: "6px 6px",
-        maskImage:
-          "radial-gradient(3px 3px at 2px 2px, transparent 92%, black 100%)",
-        maskSize: "6px 6px",
-      }}
-    >
-      {status}
-    </span>
-  )
-}
-
 function ProjectCard({
   project,
   total,
@@ -123,13 +107,20 @@ function ProjectCard({
   const titleId = `work-${project.slug}-title`
 
   return (
-    <article
-      aria-labelledby={titleId}
-      style={{ "--misprint": misprintColor[project.color] } as CSSProperties}
-      className={`${accentColorClass[project.color]} group relative flex flex-col gap-[clamp(16px,1.8vw,24px)] overflow-hidden border-3 border-ink p-[clamp(20px,3vw,40px)] transition-[rotate,translate,box-shadow] duration-300 ${ease} ${cardTilt[index % cardTilt.length]} [box-shadow:10px_10px_0_var(--misprint)] hover:rotate-0 hover:-translate-x-1 hover:-translate-y-1 hover:[box-shadow:18px_18px_0_var(--misprint)] ${
-        stacked ? "h-full" : "min-h-0"
-      }`}
-    >
+    <div className={`group relative ${stacked ? "h-full" : ""}`}>
+      <article
+        aria-labelledby={titleId}
+        style={{ "--misprint": misprintColor[project.color] } as CSSProperties}
+        className={`${accentColorClass[project.color]} relative flex flex-col gap-[clamp(16px,1.8vw,24px)] overflow-hidden border-3 border-ink p-[clamp(20px,3vw,40px)] transition-[rotate,translate,box-shadow] duration-300 ${ease} ${cardTilt[index % cardTilt.length]} [box-shadow:10px_10px_0_var(--misprint)] group-hover:rotate-0 group-hover:-translate-x-1 group-hover:-translate-y-1 group-hover:[box-shadow:18px_18px_0_var(--misprint)] ${
+          stacked ? "h-full" : "min-h-0"
+        }`}
+      >
+        <Link
+          to={`/work/${project.slug}`}
+          aria-hidden="true"
+          tabIndex={-1}
+          className="absolute inset-0 z-[1]"
+        />
       <span
         aria-hidden="true"
         className="pointer-events-none absolute -right-3 -top-8 select-none font-display text-[clamp(150px,19vw,260px)] font-bold uppercase leading-[0.8] tracking-[-0.07em] text-transparent opacity-[0.10] [-webkit-text-stroke:2px_currentColor]"
@@ -202,7 +193,7 @@ function ProjectCard({
             <Button
               to={`/work/${project.slug}`}
               variant="black"
-              className={`after:absolute after:inset-0 after:z-[1] after:content-[''] max-mob:flex-1 max-mob:justify-center`}
+              className={`relative z-[2] max-mob:flex-1 max-mob:justify-center`}
             >
               {t(dict.work.readCase)}
               <span
@@ -242,7 +233,7 @@ function ProjectCard({
           <div className="relative min-h-[280px] flex-1 max-mob:min-h-[220px]">
             <span
               aria-hidden="true"
-              className="absolute -bottom-2 -right-2 h-full w-full border-3 border-ink bg-black max-mob:-bottom-1.5 max-mob:-right-1.5 dark:bg-white"
+              className="absolute -bottom-2 -right-2 h-full w-full border-3 border-ink bg-[var(--misprint)] max-mob:-bottom-1.5 max-mob:-right-1.5"
             />
             <span
               aria-hidden="true"
@@ -251,12 +242,24 @@ function ProjectCard({
             <span className="absolute left-4 top-3 z-[5] -rotate-3 border-3 border-ink bg-white px-2 py-0.5 font-mono text-[9px] font-bold uppercase tracking-[0.12em] text-black shadow-hard-xs">
               FIG. {project.number}
             </span>
+            <span
+              aria-hidden="true"
+              className="absolute -right-1.5 -top-1.5 z-[6] size-3 border-r-3 border-t-3 border-ink"
+            />
+            <span
+              aria-hidden="true"
+              className="absolute -right-3.5 top-1.5 z-[6] h-3 w-[3px] bg-ink"
+            />
+            <span
+              aria-hidden="true"
+              className="absolute -bottom-3.5 right-1.5 z-[6] h-[3px] w-3 bg-ink"
+            />
             <div className="relative h-full border-3 border-ink bg-paper p-2">
               <div className="h-full overflow-hidden border-3 border-ink">
                 <div
                   className={`h-full transition-transform duration-700 ${ease} group-hover:scale-[1.04]`}
                 >
-                  <ProjectVisual type={project.visual} />
+                  <ProjectVisual type={project.visual} image={project.image} />
                 </div>
               </div>
             </div>
@@ -275,7 +278,7 @@ function ProjectCard({
                 key={t(metric.label)}
                 className={`min-w-0 flex-1 border-3 border-ink bg-white px-2.5 py-1.5 text-black shadow-hard-xs transition-[rotate] duration-300 ${ease} ${metricTilt[metricIndex % metricTilt.length]} group-hover:rotate-0`}
               >
-                <strong className="block font-display text-[clamp(15px,1.5vw,20px)] leading-none tracking-[-0.04em]">
+                <strong className="block font-display text-[clamp(18px,2vw,28px)] font-bold leading-none tracking-[-0.05em]">
                   {metric.value}
                 </strong>
                 <span className="mt-1 block text-[8px] font-bold uppercase leading-[1.15] tracking-[0.04em] opacity-70">
@@ -286,7 +289,8 @@ function ProjectCard({
           </div>
         </div>
       </div>
-    </article>
+      </article>
+    </div>
   )
 }
 
@@ -317,12 +321,20 @@ export default function Projects() {
       className="relative border-b-3 border-ink py-[clamp(64px,9vw,128px)]"
       id="work"
     >
+      <TapeMarquee
+        items={[
+          `${t(dict.work.titlePart1)}${t(dict.work.titleAccent)}`,
+          `${String(projects.length).padStart(2, "0")} ${t(dict.work.counterLabel)}`,
+          profile.name.toUpperCase(),
+        ]}
+      />
+
       <div
         aria-hidden="true"
         className="pointer-events-none absolute inset-0 overflow-hidden"
       >
         <span className="absolute inset-0 opacity-[0.06] [background-image:radial-gradient(var(--ink)_1.5px,transparent_1.6px)] [background-size:24px_24px]" />
-        <span className="absolute -right-[2%] top-[6%] select-none font-display text-[20vw] font-bold uppercase leading-none tracking-[-0.07em] text-transparent opacity-[0.08] [-webkit-text-stroke:2px_var(--ink)] max-tab:hidden">
+        <span className="absolute -right-[2%] top-[6%] -rotate-2 select-none font-display text-[20vw] font-bold uppercase leading-none tracking-[-0.07em] text-transparent opacity-[0.08] [-webkit-text-stroke:2px_var(--ink)] max-tab:hidden">
           Work
         </span>
       </div>
@@ -344,25 +356,32 @@ export default function Projects() {
         />
 
         <div
-          className="mb-10 border-b-3 border-ink pb-6 max-mob:mb-8"
+          className="mb-10 border-3 border-ink bg-surface p-2 shadow-hard max-mob:mb-8 max-mob:p-1.5"
           data-reveal
         >
-          <ToggleGroup
-            value={[filter]}
-            onValueChange={(value) => {
-              const next = value[0]
-              if (next) setFilter(next as Filter)
-            }}
-            variant="outline"
-            className="flex flex-wrap gap-2.5 max-mob:flex-nowrap max-mob:overflow-x-auto max-mob:pb-1.5"
-            aria-label={t(dict.work.filterAria)}
-          >
-            {filterConfig.map(({ value, label, dot, active }) => (
-              <ToggleGroupItem
-                key={value}
-                value={value}
-                className={`gap-2 border-2 text-xs font-bold uppercase tracking-[0.06em] transition-[translate,box-shadow,background-color,color] aria-pressed:-translate-y-0.5 aria-pressed:shadow-hard-xs data-pressed:-translate-y-0.5 data-pressed:shadow-hard-xs max-mob:flex-none ${active}`}
-              >
+          <div className="flex items-stretch">
+            <span
+              aria-hidden="true"
+              className="hidden items-center border-r-3 border-ink px-4 font-mono text-[10px] font-bold uppercase tracking-[0.2em] tab:flex"
+            >
+              INDEX/
+            </span>
+            <ToggleGroup
+              value={[filter]}
+              onValueChange={(value) => {
+                const next = value[0]
+                if (next) setFilter(next as Filter)
+              }}
+              variant="outline"
+              className="flex flex-1 flex-wrap gap-2 max-mob:flex-nowrap max-mob:overflow-x-auto max-mob:pb-1.5"
+              aria-label={t(dict.work.filterAria)}
+            >
+              {filterConfig.map(({ value, label, dot, active }) => (
+                <ToggleGroupItem
+                  key={value}
+                  value={value}
+                  className={`gap-2 border-3 px-3 py-2.5 text-[11px] font-bold uppercase tracking-[0.06em] transition-[translate,box-shadow,background-color,color] aria-pressed:-translate-y-0.5 aria-pressed:shadow-hard-xs data-pressed:-translate-y-0.5 data-pressed:shadow-hard-xs max-mob:flex-none ${active}`}
+                >
                 <span
                   aria-hidden="true"
                   className={`inline-block size-2.5 border-2 border-ink ${dot}`}
@@ -376,8 +395,9 @@ export default function Projects() {
                 </span>
                 <span className="sr-only">{counts[value]} {t(dict.work.countAll)}</span>
               </ToggleGroupItem>
-            ))}
-          </ToggleGroup>
+              ))}
+            </ToggleGroup>
+          </div>
         </div>
 
         {items.length === 0 ? (
@@ -424,12 +444,12 @@ export default function Projects() {
         )}
 
         {items.length > 0 && github && (
-          <div className="mt-[clamp(48px,6vw,88px)]" data-reveal>
+          <div className="group mt-[clamp(48px,6vw,88px)]" data-reveal>
             <a
               href={github}
               target="_blank"
               rel="noreferrer"
-              className="group flex flex-col items-start justify-between gap-5 border-3 border-ink bg-ink px-6 py-6 text-panel-foreground transition-[translate,box-shadow] duration-200 hover:-translate-x-1 hover:-translate-y-1 hover:[box-shadow:10px_10px_0_var(--pink)] sm:flex-row sm:items-center sm:px-8"
+              className="flex flex-col items-start justify-between gap-5 border-3 border-ink bg-ink px-6 py-6 text-panel-foreground transition-[translate,box-shadow] duration-200 group-hover:-translate-x-1 group-hover:-translate-y-1 group-hover:[box-shadow:10px_10px_0_var(--pink)] sm:flex-row sm:items-center sm:px-8"
             >
               <span className="font-display text-[clamp(22px,2.8vw,38px)] font-bold uppercase leading-[0.95] tracking-[-0.03em]">
                 {t(dict.work.githubTitle)}

@@ -7,6 +7,7 @@ import ScrollToTop from "@/components/ScrollToTop"
 import { Toaster } from "@/components/ui/toast"
 import dict from "@/i18n/dict"
 import { profile, socials } from "@/data/portfolio"
+import { useParallax } from "@/hooks/useParallax"
 import { useReveal } from "@/hooks/useReveal"
 import { useLang } from "@/i18n/use-lang"
 import CaseStudy from "@/pages/CaseStudy"
@@ -17,6 +18,7 @@ import StyleGuide from "@/pages/StyleGuide"
 function App() {
   const { lang } = useLang()
   useReveal()
+  useParallax()
 
   const personSchema = {
     "@context": "https://schema.org",

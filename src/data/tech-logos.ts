@@ -15,6 +15,7 @@ import ExpressOriginalIcon from "react-devicons/express/original"
 import MysqlOriginalIcon from "react-devicons/mysql/original"
 import PostgresqlOriginalIcon from "react-devicons/postgresql/original"
 import MongodbOriginalIcon from "react-devicons/mongodb/original"
+import PrismaOriginalIcon from "react-devicons/prisma/original"
 import GitOriginalIcon from "react-devicons/git/original"
 import GithubOriginalIcon from "react-devicons/github/original"
 import BitbucketOriginalIcon from "react-devicons/bitbucket/original"
@@ -46,6 +47,7 @@ export type TechSlug =
   | "mysql"
   | "postgresql"
   | "mongodb"
+  | "prisma"
   | "git"
   | "github"
   | "bitbucket"
@@ -72,6 +74,7 @@ export const techLogos: Record<TechSlug, TechLogoData> = {
   mysql: { title: "MySQL", Icon: MysqlOriginalIcon },
   postgresql: { title: "PostgreSQL", Icon: PostgresqlOriginalIcon },
   mongodb: { title: "MongoDB", Icon: MongodbOriginalIcon },
+  prisma: { title: "Prisma", Icon: PrismaOriginalIcon },
   git: { title: "Git", Icon: GitOriginalIcon },
   github: { title: "GitHub", Icon: GithubOriginalIcon },
   bitbucket: { title: "Bitbucket", Icon: BitbucketOriginalIcon },
