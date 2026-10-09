@@ -22,3 +22,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# backup lokal potret (sudah di-upload ke Cloudinary, tidak direferensi kode)
+public/portrait.png
