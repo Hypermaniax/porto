@@ -32,7 +32,10 @@ function App() {
 
   return (
     <div>
-      {useLocation().pathname.startsWith("/admin") ? (
+      {
+        /* hanya /admin persis yang membuka panel admin.
+           /admin-asal (kecoh ajaib) tetap ditangani route "*" -> NotFound. */
+        useLocation().pathname === "/admin" ? (
         <AdminPage />
       ) : (
         <>
