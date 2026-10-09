@@ -318,6 +318,18 @@
   -webkit-text-stroke: 1.6px var(--panel-foreground);
 }
 
+/* tirai perpindahan halaman: sapuan kiri -> kanan (mulai di luar layar kiri,
+   berakhir menutup seluruh layar). PAKAI keyframes karena elemennya baru
+   menghuni DOM seusai klik — transition tidak jalan untuk style pertama. */
+@keyframes tirai-sapu {
+  from {
+    transform: translateX(-102%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
 /* lightbox galeri studi kasus: overlay pudar masuk + kartu gambar tumbuh pop */
 .lightbox-backdrop {
   background-color: rgba(0, 0, 0, 0.94);
@@ -436,7 +448,7 @@
   }
 
   /* tirai berangkat instan (prefers-reduced-motion) */
-  .intro-lepas {
+.intro-lepas {
     transition-duration: 0.01ms;
   }
 

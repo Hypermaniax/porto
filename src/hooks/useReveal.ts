@@ -32,7 +32,22 @@ export function useReveal(tunda = false) {
 
     const observe = (node: HTMLElement) => observer.observe(node)
 
-    nodes().forEach(observe)
+    const awal: HTMLElement[] = []
+    nodes().forEach((node) => {
+      // batch pertama: elemen yang sudah ada di viewport saat pengamat
+      // mulai bekerja (halaman baru dibuka, atau kembali ke posisi scroll
+      // lama). Disebarkan jeda berurutan supaya animasinya mekar cascade
+      // terlihat jelas, bukan semua pop di frame yang sama.
+      const rect = node.getBoundingClientRect()
+      if (rect.top < window.innerHeight && rect.bottom > 0) {
+        node.style.setProperty(
+          "--reveal-delay",
+          `${Math.min(awal.length * 90, 720)}ms`,
+        )
+        awal.push(node)
+      }
+      observe(node)
+    })
 
     const mutations = new MutationObserver((records) => {
       records.forEach((record) => {

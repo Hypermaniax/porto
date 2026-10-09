@@ -1,10 +1,14 @@
-import { useEffect } from "react"
+import { useLayoutEffect } from "react"
 import { useLocation } from "react-router-dom"
 
 export default function ScrollToTop() {
   const { pathname, hash } = useLocation()
 
-  useEffect(() => {
+  // useLayoutEffect + behavior "instant": pergantian halaman WAJIB
+  // potong langsung ke atas sebelum cat (paint) — jangan ikut
+  // scroll-behavior: smooth global, kalau tidak halaman baru terlihat
+  // "digulir dari bawah ke atas" dan terasa rusak.
+  useLayoutEffect(() => {
     if (hash) {
       const target = document.getElementById(hash.slice(1))
       if (target) {
@@ -12,7 +16,7 @@ export default function ScrollToTop() {
         return
       }
     }
-    window.scrollTo(0, 0)
+    window.scrollTo({ top: 0, left: 0, behavior: "instant" })
   }, [pathname, hash])
 
   return null

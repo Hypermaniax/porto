@@ -16,14 +16,16 @@ import NotFound from "@/pages/NotFound"
 import StyleGuide from "@/pages/StyleGuide"
 import AdminPage from "@/admin/AdminPage"
 import Intro from "@/components/Intro"
+import PindahWipe from "@/components/PindahWipe"
 
 function App() {
   // tirai intro: "lepas" = mulai turun (animasi halaman boleh jalan),
   // "selesai" = sudah tidak terlihat sama sekali (komponen dibongkar)
   const [introSelesai, setIntroSelesai] = useState(false)
-  const [tiraiLepas, setTiraiLepas] = useState(false)
   const { profile, socials } = useContent()
-  useReveal(!tiraiLepas)
+  // reveal menunggu sampai tirai intro BENAR-BENAR selesai turun,
+  // supaya animasi halaman mulai di layar yang sudah bersih (jelas).
+  useReveal(!introSelesai)
   useParallax()
 
   const personSchema = {
@@ -47,7 +49,6 @@ function App() {
         <>
           {!introSelesai && (
             <Intro
-              onLepas={() => setTiraiLepas(true)}
               onSelesai={() => setIntroSelesai(true)}
             />
           )}
@@ -59,6 +60,10 @@ function App() {
           </a>
 
           <JsonLd data={personSchema} />
+
+          {/* tirai perpindahan halaman (di bawah tirai intro, di atas semua
+              konten) — bikin klik antar halaman menyapu cepat kiri ke kanan */}
+          <PindahWipe />
 
           <ScrollProgress />
           <ScrollToTop />
