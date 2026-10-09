@@ -173,6 +173,21 @@ export default function ProjectForm({
     }
   }
 
+  // Unggah foto untuk satu item galeri, URL hasilnya langsung dipasang ke baris tsb.
+  async function handleGalleryUpload(index: number, file: File | null | undefined) {
+    if (!file) return
+    setBusy(true)
+    setError(null)
+    try {
+      const url = await uploadToCloudinary(file)
+      updateGallery(index, { image: url })
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "unggah gagal")
+    } finally {
+      setBusy(false)
+    }
+  }
+
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-5">
       {/* --- dasar --- */}
@@ -392,32 +407,53 @@ export default function ProjectForm({
           Galeri studi kasus
         </legend>
         {p.gallery.map((item, index) => (
-          <div key={index} className="mt-2 grid gap-2 sm:grid-cols-5">
-            <div>
-              <label className={labelCls} htmlFor={`f-gal-vis-${index}`}>Visual</label>
-              <select id={`f-gal-vis-${index}`} className={inputCls} value={item.visual}
-                onChange={(e) =>
-                  updateGallery(index, { visual: e.target.value as ProjectGalleryItem["visual"] })}>
-                <option value="dashboard">dashboard</option>
-                <option value="listing">listing</option>
-                <option value="booking">booking</option>
-              </select>
+          <div key={index} className="mt-2 border-3 border-ink bg-white p-3">
+            <div className="grid gap-2 sm:grid-cols-2">
+              <div>
+                <label className={labelCls} htmlFor={`f-gal-vis-${index}`}>Visual</label>
+                <select id={`f-gal-vis-${index}`} className={inputCls} value={item.visual}
+                  onChange={(e) =>
+                    updateGallery(index, { visual: e.target.value as ProjectGalleryItem["visual"] })}>
+                  <option value="dashboard">dashboard</option>
+                  <option value="listing">listing</option>
+                  <option value="booking">booking</option>
+                </select>
+              </div>
+              <div>
+                <label className={labelCls} htmlFor={`f-gal-cap-${index}`}>Caption</label>
+                <input id={`f-gal-cap-${index}`} className={inputCls} value={item.caption}
+                  onChange={(e) =>
+                    updateGallery(index, { caption: e.target.value })} />
+              </div>
             </div>
-            <div className="sm:col-span-2">
-              <label className={labelCls} htmlFor={`f-gal-img-${index}`}>
-                URL gambar (boleh kosong)
+            <div className="mt-2 flex flex-wrap items-center gap-3">
+              <label className="cursor-pointer border-3 border-ink bg-yellow px-3 py-1.5 text-xs font-bold uppercase">
+                {busy ? "mengunggah…" : "unggah foto"}
+                <input type="file" accept="image/*" className="sr-only"
+                  onChange={(e) => {
+                    void handleGalleryUpload(index, e.target.files?.[0] ?? null)
+                    e.target.value = ""
+                  }} />
               </label>
-              <input id={`f-gal-img-${index}`} className={inputCls} value={item.image ?? ""}
-                onChange={(e) => updateGallery(index, { image: e.target.value })} />
+              <span className="text-[10px] font-bold uppercase opacity-60">
+                otomatis ke Cloudinary
+              </span>
             </div>
-            <div>
-              <label className={labelCls} htmlFor={`f-gal-cap-${index}`}>Caption</label>
-              <input id={`f-gal-cap-${index}`} className={inputCls} value={item.caption}
-                onChange={(e) =>
-                  updateGallery(index, { caption: e.target.value })} />
+            <div className="mt-2 grid gap-2 sm:grid-cols-2">
+              <div>
+                <label className={labelCls} htmlFor={`f-gal-img-${index}`}>
+                  URL gambar (diisi otomatis setelah unggah)
+                </label>
+                <input id={`f-gal-img-${index}`} className={inputCls} value={item.image ?? ""}
+                  onChange={(e) => updateGallery(index, { image: e.target.value })} />
+              </div>
+              {item.image ? (
+                <img src={item.image} alt={`galeri ${index + 1}`}
+                  className="h-24 w-auto max-w-full border-3 border-ink object-cover" />
+              ) : null}
             </div>
             <button type="button" onClick={() => removeGallery(index)}
-              className="border-3 border-ink bg-white px-3 py-2 text-xs font-bold uppercase">
+              className="mt-3 border-3 border-ink bg-white px-3 py-1 text-[10px] font-bold uppercase">
               Hapus
             </button>
           </div>

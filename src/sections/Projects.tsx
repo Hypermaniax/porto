@@ -274,7 +274,10 @@ function ProjectCard({
                 key={metric.label}
                 className={`min-w-0 flex-1 border-3 border-ink bg-white px-2.5 py-1.5 text-black shadow-hard-xs transition-[rotate] duration-300 ${ease} ${metricTilt[metricIndex % metricTilt.length]} group-hover:rotate-0`}
               >
-                <strong className="block font-display text-[clamp(18px,2vw,28px)] font-bold leading-none tracking-[-0.05em]">
+                <strong
+                  className="block overflow-hidden font-display text-[clamp(16px,2vw,28px)] font-bold leading-tight tracking-[-0.04em] [overflow-wrap:anywhere]"
+                  style={{ fontSize: metric.value.length > 9 ? "clamp(13px, 1.15vw, 17px)" : undefined }}
+                >
                   {dash(metric.value)}
                 </strong>
                 <span className="mt-1 block text-[8px] font-bold uppercase leading-[1.15] tracking-[0.04em] opacity-70">

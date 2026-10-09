@@ -1,3 +1,4 @@
+import { useEffect, useRef, useState } from "react"
 import { Link, useParams } from "react-router-dom"
 import Button from "@/components/Button"
 import JsonLd from "@/components/JsonLd"
@@ -164,6 +165,31 @@ export default function CaseStudy() {
   const { slug } = useParams()
   const project = useProjectBySlug(slug)
 
+  // Lightbox galeri: item yang sedang diperbesar.
+  // zoomPos = posisi DALAM daftar item yang punya foto (lihat fotoIdx di bawah).
+  const [zoomPos, setZoomPos] = useState<number | null>(null)
+  // fly = animasi kartu depan sedang dilempar ("kiri"/"kanan") saat geser.
+  const [fly, setFly] = useState<"kiri" | "kanan" | null>(null)
+  // posisi X awal untuk gesture swipe.
+  const mulaiGeser = useRef<number | null>(null)
+
+  // Kunci scroll halaman + tombol Esc/panah saat lightbox terbuka.
+  useEffect(() => {
+    if (zoomPos === null) return
+    const sebelumnya = document.body.style.overflow
+    document.body.style.overflow = "hidden"
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setZoomPos(null)
+      if (event.key === "ArrowRight") geserFoto(1)
+      if (event.key === "ArrowLeft") geserFoto(-1)
+    }
+    window.addEventListener("keydown", onKey)
+    return () => {
+      document.body.style.overflow = sebelumnya
+      window.removeEventListener("keydown", onKey)
+    }
+  }, [zoomPos, fly])
+
   useDocumentMeta({
     title: project
       ? `${project.title} — ${dict.caseStudy.metaSuffix} — Niko Agustio`
@@ -185,6 +211,23 @@ export default function CaseStudy() {
   ]
 
   const galleryLetters = ["A", "B", "C", "D"]
+  // indeks item galeri yang benar-benar punya foto (untuk navigasi lightbox).
+  const fotoIdx = project.gallery
+    .map((item, i) => (item.image ? i : -1))
+    .filter((i) => i >= 0)
+  const banyakFoto = fotoIdx.length
+
+  // Lemparkan kartu depan ke arah dir, lalu angkat kartu belakang jadi depan.
+  function geserFoto(dir: 1 | -1) {
+    if (fly !== null || zoomPos === null || banyakFoto < 2) return
+    const target = (zoomPos + dir + banyakFoto) % banyakFoto
+    setFly(dir === 1 ? "kiri" : "kanan")
+    window.setTimeout(() => {
+      setZoomPos(target)
+      setFly(null)
+    }, 330)
+  }
+
   const challengeParagraphs = (project.challenge || "-")
     .split(/\n{2,}/)
     .map((paragraph) => paragraph.trim())
@@ -769,7 +812,10 @@ export default function CaseStudy() {
                       +
                     </span>
 
-                    <strong className="relative font-display text-[clamp(42px,4.6vw,74px)] font-bold leading-[0.82] tracking-[-0.06em]">
+                    <strong
+                      className="relative block overflow-hidden font-display text-[clamp(42px,4.6vw,74px)] font-bold leading-[0.9] tracking-[-0.06em] [overflow-wrap:anywhere]"
+                      style={{ fontSize: metric.value.length > 9 ? "clamp(30px, 3vw, 46px)" : undefined }}
+                    >
                       {dash(metric.value)}
                     </strong>
 
@@ -851,8 +897,23 @@ export default function CaseStudy() {
                         />
                       )}
 
-                      <div className="relative overflow-hidden border-3 border-ink">
-                        <ProjectVisual type={item.visual} image={item.image} />
+                      <div className="relative">
+                        {item.image ? (
+                          <button
+                            type="button"
+                            onClick={() => setZoomPos(fotoIdx.indexOf(itemIndex))}
+                            aria-label={`Perbesar: ${dash(item.caption)}`}
+                            className="block w-full cursor-zoom-in"
+                          >
+                            <div className="relative overflow-hidden border-3 border-ink">
+                              <ProjectVisual type={item.visual} image={item.image} />
+                            </div>
+                          </button>
+                        ) : (
+                          <div className="relative overflow-hidden border-3 border-ink">
+                            <ProjectVisual type={item.visual} image={item.image} />
+                          </div>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -970,6 +1031,166 @@ export default function CaseStudy() {
           </div>
         </div>
       </section>
+
+      {/* --- lightbox: galeri jadi tumpukan kartu, geser kanan/kiri --- */}
+      {zoomPos !== null && fotoIdx[zoomPos] !== undefined
+        ? (() => {
+            const idx = fotoIdx[zoomPos]
+            const item = project.gallery[idx]
+            const plate = galleryLetters[idx] ?? idx + 1
+            return (
+              <div
+                role="dialog"
+                aria-modal="true"
+                aria-label={dash(item.caption)}
+                onClick={() => setZoomPos(null)}
+                className="lightbox-backdrop lightbox-fade fixed inset-0 z-[90] flex flex-col items-center justify-center gap-4 overflow-y-auto p-[clamp(16px,4vw,48px)]"
+              >
+                <figure
+                  onClick={(event) => event.stopPropagation()}
+                  onPointerDown={(event) => {
+                    mulaiGeser.current = event.clientX
+                  }}
+                  onPointerUp={(event) => {
+                    const awal = mulaiGeser.current
+                    mulaiGeser.current = null
+                    if (awal === null) return
+                    const selisih = event.clientX - awal
+                    if (Math.abs(selisih) > 60) geserFoto(selisih < 0 ? 1 : -1)
+                  }}
+                  className="lightbox-pop relative m-0 flex max-h-full flex-col select-none [touch-action:pan-y]"
+                >
+                  {/* nomor plate raksasa outline di belakang deck (stempel galeri) */}
+                  <span
+                    aria-hidden="true"
+                    className="text-hollow pointer-events-none absolute -bottom-[clamp(40px,10vw,120px)] left-1/2 z-0 -translate-x-1/2 select-none font-display text-[clamp(160px,30vw,420px)] font-bold leading-[0.7] tracking-[-0.08em] opacity-[0.13]"
+                  >
+                    {plate}
+                  </span>
+
+                  <div className="relative">
+                    {/* kartu-kartu di BELAKANG:
+                      normal = 2 gambar berikutnya sudah tersusun;
+                      saat terbang = hanya 1, yaitu TARGET geseran, supaya
+                      setelah kartu depan lempar, target langsung jadi depan */}
+                  {(fly
+                    ? [fly === "kiri" ? 1 : -1]
+                    : banyakFoto > 1
+                      ? [1, 2].slice(0, Math.min(2, banyakFoto - 1))
+                      : []
+                  ).map((offset, urut) => {
+                    const idxBelakang = (zoomPos + offset + banyakFoto) % banyakFoto
+                    return (
+                      <div
+                        key={offset}
+                        aria-hidden="true"
+                        className={`absolute inset-0 border-[4px] border-ink bg-surface p-[clamp(8px,1vw,14px)] ${
+                          urut === 0 ? "lightbox-belakang-1" : "lightbox-belakang-2"
+                        }`}
+                      >
+                        <img
+                          src={project.gallery[fotoIdx[idxBelakang]].image}
+                          alt=""
+                          draggable={false}
+                          className="h-full w-full border-3 border-ink object-contain"
+                        />
+                      </div>
+                    )
+                  })}
+
+                    {/* blok cadangan warna di paling belakang (pola grid galeri) */}
+                    <span
+                      aria-hidden="true"
+                      className={`absolute inset-0 z-0 translate-x-5 translate-y-5 border-[4px] border-ink ${
+                        galleryBacking[idx % galleryBacking.length]
+                      }`}
+                    />
+
+                  {/* kartu depan: terlempar keluar saat geser */}
+                  <div
+                    className={`lightbox-kartu-depan relative z-10 border-[4px] border-ink bg-surface p-[clamp(10px,1.4vw,20px)] [box-shadow:14px_14px_0_var(--ink)] ${
+                      fly === "kiri" ? "lightbox-terbang-kiri" : fly === "kanan" ? "lightbox-terbang-kanan" : ""
+                    }`}
+                  >
+                    {/* lakban pengunci di atas frame */}
+                    <span
+                      aria-hidden="true"
+                      className="pointer-events-none absolute -top-3.5 left-1/2 z-30 h-5 w-24 -translate-x-1/2 rotate-2 bg-yellow/95 shadow-[2px_2px_0_rgba(0,0,0,0.35)]"
+                    />
+                    <span
+                      aria-hidden="true"
+                      className="absolute left-4 top-4 z-30 -rotate-3 border-3 border-ink bg-ink px-2.5 py-1 font-mono text-[10px] font-bold uppercase tracking-[0.2em] text-panel-foreground shadow-hard-xs"
+                    >
+                      PLATE {plate} · {zoomPos + 1}/{banyakFoto}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => setZoomPos(null)}
+                      className="absolute right-[clamp(12px,1.5vw,22px)] top-[clamp(12px,1.5vw,22px)] z-30 border-3 border-ink bg-pink px-2.5 py-1.5 font-mono text-[10px] font-bold uppercase tracking-[0.2em] text-black shadow-hard-xs transition-transform hover:-rotate-3 active:translate-x-[3px] active:translate-y-[3px]"
+                    >
+                      tutup ✕
+                    </button>
+                    <img
+                      src={item.image}
+                      alt={dash(item.caption)}
+                      draggable={false}
+                      className="max-h-[68vh] w-auto max-w-full border-3 border-ink object-contain"
+                    />
+                    {/* tanda plus di sudut frame: register cetakan */}
+                    <span
+                      aria-hidden="true"
+                      className="pointer-events-none absolute bottom-1.5 left-2 z-20 font-mono text-xs font-bold opacity-30"
+                    >
+                      ＋
+                    </span>
+                    <span
+                      aria-hidden="true"
+                      className="pointer-events-none absolute bottom-1.5 right-2 z-20 font-mono text-xs font-bold opacity-30"
+                    >
+                      ＋
+                    </span>
+                  </div>
+
+                    {/* tombol geser kiri / kanan */}
+                    {banyakFoto > 1 ? (
+                      <>
+                        <button
+                          type="button"
+                          aria-label="Gambar sebelumnya"
+                          onClick={() => geserFoto(-1)}
+                          className="absolute left-[clamp(-10px,-1.2vw,-4px)] top-1/2 z-30 -translate-y-1/2 border-3 border-ink bg-surface px-[clamp(8px,1.2vw,14px)] py-2.5 font-mono text-lg font-bold text-ink shadow-hard-xs transition-transform hover:-translate-x-1 active:translate-x-[2px] active:translate-y-[2px]"
+                        >
+                          ‹
+                        </button>
+                        <button
+                          type="button"
+                          aria-label="Gambar berikutnya"
+                          onClick={() => geserFoto(1)}
+                          className="absolute right-[clamp(-10px,-1.2vw,-4px)] top-1/2 z-30 -translate-y-1/2 border-3 border-ink bg-yellow px-[clamp(8px,1.2vw,14px)] py-2.5 font-mono text-lg font-bold text-black shadow-hard-xs transition-transform hover:translate-x-1 active:translate-x-[2px] active:translate-y-[2px]"
+                        >
+                          ›
+                        </button>
+                      </>
+                    ) : null}
+                  </div>
+
+                  {/* keterangan kartu: bar hitam solid ala caption grid */}
+                  <figcaption className="relative z-10 mt-[max(16px,1.6vw)] flex flex-wrap items-center gap-3 border-[4px] border-ink bg-ink px-3 py-2 text-panel-foreground">
+                    <span className="shrink-0 border-[3px] border-panel-foreground px-2 py-0.5 font-mono text-[10px] font-bold uppercase tracking-[0.2em]">
+                      FIG. {plate}
+                    </span>
+                    <span className="min-w-0 flex-1 font-mono text-[11px] font-bold uppercase tracking-[0.04em]">
+                      {dash(item.caption)}
+                    </span>
+                    <span className="hidden shrink-0 items-center gap-1 font-mono text-[10px] font-bold uppercase opacity-60 sm:flex">
+                      ← → geser · esc keluar
+                    </span>
+                  </figcaption>
+                </figure>
+              </div>
+            )
+          })()
+        : null}
     </article>
   )
 }
