@@ -1,7 +1,6 @@
 import { Link } from "react-router-dom"
 import dict from "@/i18n/dict"
-import { profile, socials } from "@/data/portfolio"
-import { useLang } from "@/i18n/use-lang"
+import { useContent } from "@/data/use-content"
 
 const container = "mx-auto w-full max-w-[1240px] px-(--pad)"
 
@@ -37,7 +36,7 @@ function Barcode() {
 }
 
 export default function Footer() {
-  const { t } = useLang()
+  const { profile, socials } = useContent()
 
   return (
     <footer className="relative overflow-hidden bg-panel text-panel-foreground [--focus-ring:var(--yellow)]">
@@ -51,7 +50,7 @@ export default function Footer() {
       >
         <div>
           <p className="m-0 max-w-[24ch] font-display text-[clamp(26px,3vw,40px)] font-bold leading-[1.05] tracking-[-0.04em]">
-            {t(profile.tagline)}
+            {profile.tagline}
           </p>
           <a
             className="group mt-4 inline-flex items-center gap-3"
@@ -69,7 +68,7 @@ export default function Footer() {
           </a>
           <nav
             className="mt-7 flex flex-wrap gap-x-6 gap-y-2 text-[11px] font-bold"
-            aria-label={t(dict.header.footerNav)}
+            aria-label={dict.header.footerNav}
           >
             {navItems.map((item, index) => (
               <Link
@@ -83,7 +82,7 @@ export default function Footer() {
                 >
                   {String(index + 1).padStart(2, "0")}
                 </span>
-                {t(dict.footer[item.labelKey])}
+                {dict.footer[item.labelKey]}
               </Link>
             ))}
           </nav>
@@ -91,7 +90,7 @@ export default function Footer() {
 
         <div className="flex flex-col items-end gap-5 max-mob:items-start">
           <span className="font-mono text-[10px] font-bold uppercase tracking-[0.14em] opacity-70">
-            {t(dict.footer.elsewhere)}
+            {dict.footer.elsewhere}
           </span>
           <div className="flex flex-wrap gap-2.5">
             {socials.map((social, index) => (
@@ -114,7 +113,7 @@ export default function Footer() {
           className={`${container} flex flex-wrap items-center justify-between gap-x-4 gap-y-2 py-3 font-mono text-[10px] font-bold uppercase tracking-[0.14em]`}
         >
           <span>
-            © 2026 {profile.name.toUpperCase()}. {t(dict.footer.rights)}
+            © 2026 {profile.name.toUpperCase()}. {dict.footer.rights}
           </span>
           <span className="flex items-center gap-3">
             <Barcode />
@@ -128,7 +127,7 @@ export default function Footer() {
           aria-hidden="true"
           className="absolute right-[7%] top-2 z-10 -rotate-6 border-3 border-black bg-white px-3 py-1.5 font-mono text-[11px] font-bold uppercase tracking-[0.18em] text-black shadow-[4px_4px_0_#000]"
         >
-          {t(dict.footer.endOfFile)}
+          {dict.footer.endOfFile}
         </span>
         <p
           aria-hidden="true"

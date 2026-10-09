@@ -1,6 +1,5 @@
 import { Link, useLocation } from "react-router-dom"
 import Button from "@/components/Button"
-import LanguageToggle from "@/components/LanguageToggle"
 import ThemeToggle from "@/components/ThemeToggle"
 import {
   Sheet,
@@ -12,18 +11,18 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet"
 import dict from "@/i18n/dict"
-import { navItems, profile, socials } from "@/data/portfolio"
-import { useLang } from "@/i18n/use-lang"
+import { navItems } from "@/data/portfolio"
+import { useContent } from "@/data/use-content"
 import { useScrollSpy } from "@/hooks/useScrollSpy"
 
 const sectionIds = navItems.map((item) => item.id)
 
 export default function Header() {
   const { pathname } = useLocation()
-  const { lang, t } = useLang()
+  const { profile, socials } = useContent()
   const isHome = pathname === "/"
   const activeId = useScrollSpy(sectionIds, isHome)
-  const menuTicker = dict.menu.ticker[lang]
+  const menuTicker = dict.menu.ticker
 
   return (
     <header className="sticky top-3 z-50 px-(--pad) max-mob:top-2">
@@ -48,7 +47,7 @@ export default function Header() {
 
         <nav
           className="flex justify-center gap-1 max-mob:hidden"
-          aria-label={t(dict.header.primaryNav)}
+          aria-label={dict.header.primaryNav}
         >
           {navItems.map((item, index) => {
             const id = item.id
@@ -70,20 +69,19 @@ export default function Header() {
                 >
                   {String(index + 1).padStart(2, "0")}
                 </span>
-                {t(item.label)}
+                {item.label}
               </Link>
             )
           })}
         </nav>
 
         <div className="flex items-center justify-self-end gap-3 max-mob:gap-2">
-          <LanguageToggle className="max-mob:hidden" />
           <ThemeToggle className="max-mob:hidden" />
 
           <Sheet>
             <SheetTrigger
               className="group flex size-12 cursor-pointer flex-col items-center justify-center gap-2 border-3 border-ink bg-yellow transition-colors hover:bg-ink max-mob:size-11"
-              aria-label={t(dict.header.openMenu)}
+              aria-label={dict.header.openMenu}
             >
               <span className="h-[3px] w-[24px] bg-black transition-all group-hover:bg-yellow group-data-[popup-open]:translate-y-[5.5px] group-data-[popup-open]:rotate-45" />
               <span className="h-[3px] w-[24px] bg-black transition-all group-hover:bg-yellow group-data-[popup-open]:-translate-y-[5.5px] group-data-[popup-open]:-rotate-45" />
@@ -95,8 +93,8 @@ export default function Header() {
               className="w-full! max-w-none! gap-0! border-0! bg-main p-0 text-black sm:max-w-none!"
             >
               <SheetHeader className="sr-only">
-                <SheetTitle>{dict.header.menuTitle[lang]}</SheetTitle>
-                <SheetDescription>{t(dict.header.primaryNav)}</SheetDescription>
+                <SheetTitle>{dict.header.menuTitle}</SheetTitle>
+                <SheetDescription>{dict.header.primaryNav}</SheetDescription>
               </SheetHeader>
 
               <div className="relative flex h-full flex-1 flex-col overflow-hidden">
@@ -119,7 +117,7 @@ export default function Header() {
                     <ThemeToggle />
                     <SheetClose
                       className="grid size-12 cursor-pointer place-items-center border-3 border-black bg-transparent transition-colors hover:bg-black hover:text-yellow"
-                      aria-label={t(dict.header.closeMenu)}
+                      aria-label={dict.header.closeMenu}
                     >
                       <span className="font-display text-2xl leading-none">✕</span>
                     </SheetClose>
@@ -133,7 +131,7 @@ export default function Header() {
 
                 <nav
                   className="relative z-10 flex flex-1 flex-col justify-center px-5 sm:px-10"
-                  aria-label={t(dict.header.primaryNav)}
+                  aria-label={dict.header.primaryNav}
                 >
                   {navItems.map((item, index) => {
                     const id = item.id
@@ -160,7 +158,7 @@ export default function Header() {
                           {String(index + 1).padStart(2, "0")}
                         </span>
                         <span className="font-display text-[clamp(40px,12vw,104px)] font-bold uppercase leading-[0.9] tracking-[-0.055em]">
-                          {t(item.label)}
+                          {item.label}
                         </span>
                         <span
                           aria-hidden="true"
@@ -227,7 +225,7 @@ export default function Header() {
           </Sheet>
 
           <Button to="/#contact" className="-rotate-1 max-mob:hidden">
-            {t(dict.header.hireMe)} <span aria-hidden="true">↗</span>
+            {dict.header.hireMe} <span aria-hidden="true">↗</span>
           </Button>
         </div>
       </div>

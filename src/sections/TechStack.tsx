@@ -7,16 +7,16 @@ import {
   accentColorClass,
   misprintColor,
   techCategoryColor,
-  techStack,
   type TechCategory,
 } from "@/data/portfolio"
-import { useLang, type L10n } from "@/i18n/use-lang"
+import { useContent } from "@/data/use-content"
+import EmptyState from "@/components/EmptyState"
 
 type Filter = "ALL" | TechCategory
 
 const ease = "ease-[cubic-bezier(0.32,0.72,0,1)]"
 
-const filterConfig: { value: Filter; label: L10n; dot: string; active: string }[] = [
+const filterConfig: { value: Filter; label: string; dot: string; active: string }[] = [
   {
     value: "ALL",
     label: dict.stack.filterAll,
@@ -26,28 +26,28 @@ const filterConfig: { value: Filter; label: L10n; dot: string; active: string }[
   },
   {
     value: "FRONTEND",
-    label: { en: "FRONTEND", id: "FRONTEND" },
+    label: "FRONTEND",
     dot: "bg-blue",
     active:
       "aria-pressed:bg-blue aria-pressed:text-white data-pressed:bg-blue data-pressed:text-white",
   },
   {
     value: "BACKEND",
-    label: { en: "BACKEND", id: "BACKEND" },
+    label: "BACKEND",
     dot: "bg-mint",
     active:
       "aria-pressed:bg-mint aria-pressed:text-black data-pressed:bg-mint data-pressed:text-black",
   },
   {
     value: "DATABASE",
-    label: { en: "DATABASE", id: "DATABASE" },
+    label: "DATABASE",
     dot: "bg-yellow",
     active:
       "aria-pressed:bg-yellow aria-pressed:text-black data-pressed:bg-yellow data-pressed:text-black",
   },
   {
     value: "TOOLS",
-    label: { en: "TOOLS", id: "TOOLS" },
+    label: "TOOLS",
     dot: "bg-pink",
     active:
       "aria-pressed:bg-pink aria-pressed:text-black data-pressed:bg-pink data-pressed:text-black",
@@ -60,7 +60,7 @@ const tileTilt = ["rotate-[-1.1deg]", "rotate-[0.9deg]"]
 const plaqueTilt = ["-rotate-3", "rotate-2"]
 
 export default function TechStack() {
-  const { t } = useLang()
+  const { techStack } = useContent()
   const [filter, setFilter] = useState<Filter>("ALL")
 
   const counts = useMemo(() => {
@@ -72,7 +72,7 @@ export default function TechStack() {
           : techStack.filter((item) => item.category === category).length
     }
     return result
-  }, [])
+  }, [techStack])
 
   const items =
     filter === "ALL"
@@ -100,16 +100,16 @@ export default function TechStack() {
           tone="mint"
           title={
             <>
-              {t(dict.stack.titlePart1)}
+              {dict.stack.titlePart1}
               <span className="[text-shadow:5px_5px_0_var(--mint)]">
-                {t(dict.stack.titleAccent)}
+                {dict.stack.titleAccent}
               </span>
-              {t(dict.stack.titlePart2)}
+              {dict.stack.titlePart2}
             </>
           }
-          description={t(dict.stack.description)}
+          description={dict.stack.description}
           counter={String(items.length).padStart(2, "0")}
-          counterLabel={t(dict.stack.counterLabel)}
+          counterLabel={dict.stack.counterLabel}
         />
 
         <div className="mb-10 border-b-3 border-ink pb-6" data-reveal>
@@ -121,7 +121,7 @@ export default function TechStack() {
             }}
             variant="outline"
             className="flex flex-wrap gap-2.5 max-mob:flex-nowrap max-mob:overflow-x-auto max-mob:pb-1.5"
-            aria-label={t(dict.stack.filterAria)}
+            aria-label={dict.stack.filterAria}
           >
             {filterConfig.map(({ value, label, dot, active }) => (
               <ToggleGroupItem
@@ -133,14 +133,14 @@ export default function TechStack() {
                   aria-hidden="true"
                   className={`inline-block size-2.5 border-2 border-ink ${dot}`}
                 />
-                {t(label)}
+                {label}
                 <span
                   aria-hidden="true"
                   className="font-mono text-[10px] tabular-nums opacity-60"
                 >
                   {String(counts[value]).padStart(2, "0")}
                 </span>
-                <span className="sr-only">{counts[value]} {t(dict.stack.countAll)}</span>
+                <span className="sr-only">{counts[value]} {dict.stack.countAll}</span>
               </ToggleGroupItem>
             ))}
           </ToggleGroup>
@@ -191,6 +191,12 @@ export default function TechStack() {
             )
           })}
         </ul>
+
+        {items.length === 0 && (
+          <EmptyState
+            note={"No skills listed yet — data comes from the API."}
+          />
+        )}
       </div>
     </section>
   )

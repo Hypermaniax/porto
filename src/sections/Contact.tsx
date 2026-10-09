@@ -1,14 +1,12 @@
 import ContactForm from "@/components/ContactForm"
 import SectionHeading from "@/components/SectionHeading"
 import dict from "@/i18n/dict"
-import { misprintColor, profile } from "@/data/portfolio"
+import { misprintColor } from "@/data/portfolio"
+import { useContent } from "@/data/use-content"
 import type { AccentColor } from "@/data/portfolio"
-import { useLang } from "@/i18n/use-lang"
 import type { CSSProperties } from "react"
 
 const ease = "ease-[cubic-bezier(0.32,0.72,0,1)]"
-
-const whatsappHref = `https://wa.me/${profile.phone.replace(/\D/g, "")}`
 
 const accentTile: Record<AccentColor, string> = {
   yellow: "bg-yellow",
@@ -17,39 +15,41 @@ const accentTile: Record<AccentColor, string> = {
   mint: "bg-mint",
 }
 
-const channels: {
-  label: string
-  glyph: string
-  tile: AccentColor
-  value: string
-  href?: string
-}[] = [
-  {
-    label: "Email",
-    glyph: "@",
-    tile: "yellow",
-    value: profile.email,
-    href: `mailto:${profile.email}`,
-  },
-  {
-    label: "WhatsApp",
-    glyph: "✆",
-    tile: "mint",
-    value: profile.phone,
-    href: whatsappHref,
-  },
-  {
-    label: "Location",
-    glyph: "⌖",
-    tile: "pink",
-    value: profile.location,
-  },
-]
-
 const channelTilt = ["rotate-[-0.6deg]", "rotate-[0.5deg]", "rotate-[-0.4deg]"]
 
 export default function Contact() {
-  const { t } = useLang()
+  const { profile } = useContent()
+
+  const whatsappHref = `https://wa.me/${profile.phone.replace(/\D/g, "")}`
+
+  const channels: {
+    label: string
+    glyph: string
+    tile: AccentColor
+    value: string
+    href?: string
+  }[] = [
+    {
+      label: "Email",
+      glyph: "@",
+      tile: "yellow",
+      value: profile.email,
+      href: `mailto:${profile.email}`,
+    },
+    {
+      label: "WhatsApp",
+      glyph: "✆",
+      tile: "mint",
+      value: profile.phone,
+      href: whatsappHref,
+    },
+    {
+      label: "Location",
+      glyph: "⌖",
+      tile: "pink",
+      value: profile.location,
+    },
+  ]
 
   return (
     <section
@@ -72,15 +72,15 @@ export default function Contact() {
           tone="blue"
           title={
             <>
-              {t(dict.contact.titlePart1)}
+              {dict.contact.titlePart1}
               <span className="[text-shadow:5px_5px_0_var(--pink)]">
-                {t(dict.contact.titleAccent)}
+                {dict.contact.titleAccent}
               </span>
             </>
           }
-          description={t(dict.contact.description)}
+          description={dict.contact.description}
           counter="24H"
-          counterLabel={t(dict.contact.replyTime)}
+          counterLabel={dict.contact.replyTime}
         />
 
         <div className="grid grid-cols-[0.9fr_1.1fr] items-start gap-[clamp(40px,6vw,96px)] max-tab:grid-cols-1">
@@ -89,7 +89,7 @@ export default function Contact() {
               aria-hidden="true"
               className="absolute -top-4 left-6 z-[6] -rotate-3 border-3 border-ink bg-yellow px-3 py-1 font-mono text-[10px] font-bold uppercase tracking-[0.14em] text-black shadow-hard-xs"
             >
-              {t(dict.contact.directLines)}
+              {dict.contact.directLines}
             </span>
 
             <ul className="m-0 list-none p-0">
@@ -109,7 +109,7 @@ export default function Contact() {
                     </span>
                     <div className="flex min-w-0 flex-1 flex-col gap-0.5 px-4 py-3">
                       <span className="font-mono text-[10px] font-bold uppercase tracking-[0.12em] opacity-70">
-                        {t(dict.contact[channel.label.toLowerCase() as "email" | "whatsapp" | "location"])}
+                        {dict.contact[channel.label.toLowerCase() as "email" | "whatsapp" | "location"]}
                       </span>
                       {channel.href ? (
                         <a
@@ -141,11 +141,11 @@ export default function Contact() {
             </ul>
 
             <p className="mt-7 max-w-[46ch] text-[13px] leading-[1.6]">
-              {t(dict.contact.emailNote)}
+              {dict.contact.emailNote}
             </p>
             <span className="mt-3 inline-flex items-center gap-2 border-2 border-ink bg-mint px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.12em] text-black shadow-hard-xs">
               <span aria-hidden="true">✦</span>
-              {t(dict.contact.replyChip)}
+              {dict.contact.replyChip}
             </span>
           </div>
 
@@ -168,8 +168,8 @@ export default function Contact() {
               />
 
               <div className="relative flex flex-wrap items-center justify-between gap-2 border-b-3 border-ink bg-ink px-4 py-2.5 font-mono text-[10px] font-bold uppercase tracking-[0.16em] text-panel-foreground">
-                <span>{t(dict.contact.intakeForm)}</span>
-                <span className="opacity-80">{t(dict.contact.allFieldsRequired)}</span>
+                <span>{dict.contact.intakeForm}</span>
+                <span className="opacity-80">{dict.contact.allFieldsRequired}</span>
               </div>
 
               <div className="relative p-[clamp(20px,3vw,32px)]">

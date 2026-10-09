@@ -9,24 +9,22 @@ import TapeMarquee from "@/components/TapeMarquee"
 import TechLogo from "@/components/TechLogo"
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
 import dict from "@/i18n/dict"
+import { dash } from "@/lib/dash"
 import { useMediaQuery } from "@/hooks/useMediaQuery"
-import { useLang, type L10n } from "@/i18n/use-lang"
 import {
   accentColorClass,
   misprintColor,
-  projects,
-  socials,
-  profile,
   type Project,
   type ProjectCategory,
 } from "@/data/portfolio"
-import { techLogos } from "@/data/tech-logos"
+import { useContent } from "@/data/use-content"
+import { techData } from "@/data/tech-picker"
 
 type Filter = "ALL" | ProjectCategory
 
 const ease = "ease-[cubic-bezier(0.32,0.72,0,1)]"
 
-const filterConfig: { value: Filter; label: L10n; dot: string; active: string }[] = [
+const filterConfig: { value: Filter; label: string; dot: string; active: string }[] = [
   {
     value: "ALL",
     label: dict.work.filterAll,
@@ -36,14 +34,14 @@ const filterConfig: { value: Filter; label: L10n; dot: string; active: string }[
   },
   {
     value: "FULLSTACK",
-    label: { en: "FULLSTACK", id: "FULLSTACK" },
+    label: "FULLSTACK",
     dot: "bg-mint",
     active:
       "aria-pressed:bg-mint aria-pressed:text-black data-pressed:bg-mint data-pressed:text-black",
   },
   {
     value: "FRONTEND",
-    label: { en: "FRONTEND", id: "FRONTEND" },
+    label: "FRONTEND",
     dot: "bg-pink",
     active:
       "aria-pressed:bg-pink aria-pressed:text-black data-pressed:bg-pink data-pressed:text-black",
@@ -53,7 +51,6 @@ const filterConfig: { value: Filter; label: L10n; dot: string; active: string }[
 const metricTilt = ["-rotate-2", "rotate-1", "-rotate-1"]
 const cardTilt = ["rotate-[-0.8deg]", "rotate-[0.7deg]", "rotate-[-0.5deg]"]
 const barcodePattern = [3, 1, 2, 1, 3, 2, 1, 3, 1, 2, 3, 1, 2]
-const github = socials.find((item) => item.label === "GITHUB")?.href
 
 function Barcode() {
   return (
@@ -103,7 +100,6 @@ function ProjectCard({
   stacked: boolean
   index: number
 }) {
-  const { t } = useLang()
   const titleId = `work-${project.slug}-title`
 
   return (
@@ -131,7 +127,7 @@ function ProjectCard({
       <header
         className="relative flex items-center gap-3 border-b-3 border-ink pb-[clamp(12px,1.4vw,18px)] font-mono text-xs font-bold tracking-[0.06em] max-mob:flex-wrap max-mob:gap-x-3 max-mob:gap-y-2 max-mob:text-[11px]"
       >
-        <span className="sr-only">{t(dict.contact.statusLabel)} {project.status}</span>
+        <span className="sr-only">{dict.contact.statusLabel} {project.status}</span>
         <span className="inline-flex items-baseline gap-1.5 text-[clamp(15px,1.3vw,19px)]">
           {project.number}
           <span className="opacity-40" aria-hidden="true">
@@ -162,29 +158,29 @@ function ProjectCard({
               {project.title}
             </h3>
             <p className="mt-2.5 max-w-[42ch] text-[clamp(14px,1.2vw,17px)] font-bold leading-[1.35]">
-              {t(project.subtitle)}
+              {dash(project.subtitle)}
             </p>
           </div>
 
           <p className="m-0 line-clamp-2 max-w-[48ch] text-[clamp(13px,1.05vw,15px)] leading-[1.6] opacity-90">
-            {t(project.summary)}
+            {dash(project.summary)}
           </p>
 
           <dl className="m-0 grid grid-cols-2 gap-x-6 gap-y-3 border-t-3 border-ink pt-[clamp(10px,1.2vw,14px)] max-mob:grid-cols-1">
             <div className="flex items-baseline gap-2">
               <dt className="border-2 border-ink bg-white px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-[0.1em] text-black shadow-hard-xs">
-                {t(dict.work.role)}
+                {dict.work.role}
               </dt>
               <dd className="m-0 font-display text-[clamp(13px,1.1vw,16px)] font-bold">
-                {t(project.role)}
+                {dash(project.role)}
               </dd>
             </div>
             <div className="flex items-baseline gap-2">
               <dt className="border-2 border-ink bg-white px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-[0.1em] text-black shadow-hard-xs">
-                {t(dict.work.timeline)}
+                {dict.work.timeline}
               </dt>
               <dd className="m-0 font-display text-[clamp(13px,1.1vw,16px)] font-bold">
-                {project.timeline}
+                {dash(project.timeline)}
               </dd>
             </div>
           </dl>
@@ -195,7 +191,7 @@ function ProjectCard({
               variant="black"
               className={`relative z-[2] max-mob:flex-1 max-mob:justify-center`}
             >
-              {t(dict.work.readCase)}
+              {dict.work.readCase}
               <span
                 aria-hidden="true"
                 className={`grid size-6 place-items-center border-2 border-current opacity-70 transition-transform duration-300 ${ease} group-hover:translate-x-1 group-hover:-translate-y-px`}
@@ -206,7 +202,7 @@ function ProjectCard({
 
             <ul
               className="m-0 flex list-none flex-wrap gap-2 p-0"
-              aria-label={t(dict.work.builtWith)}
+              aria-label={dict.work.builtWith}
             >
               {project.stack.map((tech) => (
                 <li key={tech}>
@@ -214,7 +210,7 @@ function ProjectCard({
                     className={`grid size-10 place-items-center border-3 border-black bg-white shadow-[3px_3px_0_#000] transition-transform duration-300 ${ease} group-hover:-translate-y-0.5`}
                   >
                     <TechLogo slug={tech} size="1.35rem" />
-                    <span className="sr-only">{techLogos[tech].title}</span>
+                    <span className="sr-only">{techData(tech)?.title ?? tech}</span>
                   </span>
                 </li>
               ))}
@@ -272,17 +268,17 @@ function ProjectCard({
             </span>
           </div>
 
-          <div className="flex shrink-0 flex-wrap gap-2" aria-label={t(dict.work.metricsAria)}>
+          <div className="flex shrink-0 flex-wrap gap-2" aria-label={dict.work.metricsAria}>
             {project.metrics.map((metric, metricIndex) => (
               <div
-                key={t(metric.label)}
+                key={metric.label}
                 className={`min-w-0 flex-1 border-3 border-ink bg-white px-2.5 py-1.5 text-black shadow-hard-xs transition-[rotate] duration-300 ${ease} ${metricTilt[metricIndex % metricTilt.length]} group-hover:rotate-0`}
               >
                 <strong className="block font-display text-[clamp(18px,2vw,28px)] font-bold leading-none tracking-[-0.05em]">
-                  {metric.value}
+                  {dash(metric.value)}
                 </strong>
                 <span className="mt-1 block text-[8px] font-bold uppercase leading-[1.15] tracking-[0.04em] opacity-70">
-                  {t(metric.label)}
+                  {dash(metric.label)}
                 </span>
               </div>
             ))}
@@ -295,7 +291,8 @@ function ProjectCard({
 }
 
 export default function Projects() {
-  const { t } = useLang()
+  const { profile, socials, projects } = useContent()
+  const github = socials.find((item) => item.label === "GITHUB")?.href
   const [filter, setFilter] = useState<Filter>("ALL")
   const isStacked = useMediaQuery("(min-width: 1024px)")
 
@@ -308,7 +305,7 @@ export default function Projects() {
           : projects.filter((project) => project.category === value).length
     }
     return result
-  }, [])
+  }, [projects])
 
   const items =
     filter === "ALL"
@@ -323,8 +320,8 @@ export default function Projects() {
     >
       <TapeMarquee
         items={[
-          `${t(dict.work.titlePart1)}${t(dict.work.titleAccent)}`,
-          `${String(projects.length).padStart(2, "0")} ${t(dict.work.counterLabel)}`,
+          `${dict.work.titlePart1}${dict.work.titleAccent}`,
+          `${String(projects.length).padStart(2, "0")} ${dict.work.counterLabel}`,
           profile.name.toUpperCase(),
         ]}
       />
@@ -344,15 +341,15 @@ export default function Projects() {
           tone="pink"
           title={
             <>
-              {t(dict.work.titlePart1)}
+              {dict.work.titlePart1}
               <span className="[text-shadow:5px_5px_0_var(--blue)]">
-                {t(dict.work.titleAccent)}
+                {dict.work.titleAccent}
               </span>
             </>
           }
-          description={t(dict.work.description)}
+          description={dict.work.description}
           counter={total}
-          counterLabel={t(dict.work.counterLabel)}
+          counterLabel={dict.work.counterLabel}
         />
 
         <div
@@ -374,7 +371,7 @@ export default function Projects() {
               }}
               variant="outline"
               className="flex flex-1 flex-wrap gap-2 max-mob:flex-nowrap max-mob:overflow-x-auto max-mob:pb-1.5"
-              aria-label={t(dict.work.filterAria)}
+              aria-label={dict.work.filterAria}
             >
               {filterConfig.map(({ value, label, dot, active }) => (
                 <ToggleGroupItem
@@ -386,14 +383,14 @@ export default function Projects() {
                   aria-hidden="true"
                   className={`inline-block size-2.5 border-2 border-ink ${dot}`}
                 />
-                {t(label)}
+                {label}
                 <span
                   aria-hidden="true"
                   className="font-mono text-[10px] tabular-nums opacity-60"
                 >
                   {String(counts[value]).padStart(2, "0")}
                 </span>
-                <span className="sr-only">{counts[value]} {t(dict.work.countAll)}</span>
+                <span className="sr-only">{counts[value]} {dict.work.countAll}</span>
               </ToggleGroupItem>
               ))}
             </ToggleGroup>
@@ -403,10 +400,10 @@ export default function Projects() {
         {items.length === 0 ? (
           <div className="flex flex-wrap items-center justify-between gap-6 border-3 border-ink bg-surface p-8 shadow-hard">
             <p className="m-0 max-w-[42ch] font-bold">
-              {t(dict.work.empty)}
+              {dict.work.empty}
             </p>
             <Button variant="paper" onClick={() => setFilter("ALL")}>
-              {t(dict.work.viewAll)}
+              {dict.work.viewAll}
             </Button>
           </div>
         ) : isStacked && items.length > 1 ? (
@@ -452,10 +449,10 @@ export default function Projects() {
               className="flex flex-col items-start justify-between gap-5 border-3 border-ink bg-ink px-6 py-6 text-panel-foreground transition-[translate,box-shadow] duration-200 group-hover:-translate-x-1 group-hover:-translate-y-1 group-hover:[box-shadow:10px_10px_0_var(--pink)] sm:flex-row sm:items-center sm:px-8"
             >
               <span className="font-display text-[clamp(22px,2.8vw,38px)] font-bold uppercase leading-[0.95] tracking-[-0.03em]">
-                {t(dict.work.githubTitle)}
+                {dict.work.githubTitle}
               </span>
               <span className="flex items-center gap-3 text-[12px] font-bold uppercase tracking-[0.16em]">
-                {t(dict.work.githubAction)}
+                {dict.work.githubAction}
                 <span
                   aria-hidden="true"
                   className={`grid size-9 place-items-center border-2 border-current transition-[rotate,translate] duration-300 ${ease} group-hover:-translate-y-1 group-hover:translate-x-1 group-hover:rotate-45`}

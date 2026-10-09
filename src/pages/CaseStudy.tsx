@@ -5,15 +5,13 @@ import ProjectVisual from "@/components/ProjectVisual"
 import TapeMarquee from "@/components/TapeMarquee"
 import { Badge } from "@/components/ui/badge"
 import dict from "@/i18n/dict"
+import { dash } from "@/lib/dash"
 import {
   accentColorClass,
   misprintColor,
-  profile,
-  projects,
-  getProjectBySlug,
 } from "@/data/portfolio"
+import { useContent, useProjectBySlug } from "@/data/use-content"
 import { useDocumentMeta } from "@/hooks/useDocumentMeta"
-import { useLang } from "@/i18n/use-lang"
 import NotFound from "@/pages/NotFound"
 
 const container = "mx-auto w-full max-w-[1240px] px-(--pad)"
@@ -162,15 +160,15 @@ function ExhibitFrame({
 }
 
 export default function CaseStudy() {
-  const { t } = useLang()
+  const { profile, projects } = useContent()
   const { slug } = useParams()
-  const project = slug ? getProjectBySlug(slug) : undefined
+  const project = useProjectBySlug(slug)
 
   useDocumentMeta({
     title: project
-      ? `${project.title} — ${t(dict.caseStudy.metaSuffix)} — Niko Agustio`
+      ? `${project.title} — ${dict.caseStudy.metaSuffix} — Niko Agustio`
       : "Not found — Niko Agustio",
-    description: project ? t(project.summary) : undefined,
+    description: project ? project.summary : undefined,
   })
 
   if (!project) return <NotFound />
@@ -180,14 +178,14 @@ export default function CaseStudy() {
   const next = projects[(index + 1) % projects.length]
 
   const meta: { term: string; detail: string; accent?: boolean }[] = [
-    { term: t(dict.caseStudy.role), detail: t(project.role) },
-    { term: t(dict.caseStudy.timeline), detail: project.timeline },
-    { term: t(dict.caseStudy.year), detail: project.year },
-    { term: t(dict.caseStudy.status), detail: project.status, accent: true },
+    { term: dict.caseStudy.role, detail: dash(project.role) },
+    { term: dict.caseStudy.timeline, detail: dash(project.timeline) },
+    { term: dict.caseStudy.year, detail: dash(project.year) },
+    { term: dict.caseStudy.status, detail: dash(project.status), accent: true },
   ]
 
   const galleryLetters = ["A", "B", "C", "D"]
-  const challengeParagraphs = t(project.challenge)
+  const challengeParagraphs = (project.challenge || "-")
     .split(/\n{2,}/)
     .map((paragraph) => paragraph.trim())
     .filter(Boolean)
@@ -215,7 +213,7 @@ export default function CaseStudy() {
           "@context": "https://schema.org",
           "@type": "CreativeWork",
           name: project.title,
-          description: t(project.summary),
+          description: project.summary,
           dateCreated: project.year,
           keywords: project.tags.join(", "),
           author: {
@@ -249,7 +247,7 @@ export default function CaseStudy() {
               className="inline-flex items-center gap-2 border-b-3 border-ink pb-1 font-mono text-xs font-bold uppercase tracking-[0.08em] transition-colors hover:text-blue"
               to="/#work"
             >
-              <span aria-hidden="true">←</span> {t(dict.caseStudy.allWork)}
+              <span aria-hidden="true">←</span> {dict.caseStudy.allWork}
             </Link>
 
             <div className="mt-7 flex flex-wrap items-center gap-3">
@@ -287,11 +285,11 @@ export default function CaseStudy() {
             </h1>
 
             <p className="mt-6 max-w-[56ch] text-[clamp(16px,1.6vw,22px)] font-bold leading-[1.5]">
-              {t(project.subtitle)}
+              {dash(project.subtitle)}
             </p>
 
             <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3 border-y-3 border-ink py-3 font-mono text-[11px] font-bold uppercase tracking-[0.08em]">
-              <span>{t(project.role)}</span>
+              <span>{dash(project.role)}</span>
               <span aria-hidden="true" className="opacity-40">
                 /
               </span>
@@ -328,7 +326,7 @@ export default function CaseStudy() {
                 aria-hidden="true"
                 className="absolute -top-4 left-6 z-30 inline-block -rotate-3 border-3 border-ink bg-ink px-3 py-1 font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-panel-foreground shadow-hard-xs"
               >
-                {t(dict.caseStudy.specSheet)}
+                {dict.caseStudy.specSheet}
               </span>
 
               <span
@@ -469,7 +467,7 @@ export default function CaseStudy() {
 
         <div className={`${container} relative z-10`}>
           <CaseTitle
-            title={t(dict.caseStudy.challenge)}
+            title={dict.caseStudy.challenge}
             meta={`${project.category} · ${project.year}`}
             tone="yellow"
           />
@@ -527,7 +525,7 @@ export default function CaseStudy() {
                     className="my-1 w-0 shrink-0 border-l-3 border-dashed border-black/40"
                   />
                   <span className="text-[10px] font-bold uppercase tracking-[0.3em] [writing-mode:vertical-rl]">
-                    {t(dict.caseStudy.challenge)}
+                    {dict.caseStudy.challenge}
                   </span>
                 </div>
 
@@ -599,7 +597,7 @@ export default function CaseStudy() {
         </div>
         <div className={container}>
           <CaseTitle
-            title={t(dict.caseStudy.approach)}
+            title={dict.caseStudy.approach}
             meta={`${project.approach.length} STEPS`}
             tone="mint"
           />
@@ -655,7 +653,7 @@ export default function CaseStudy() {
                       </div>
 
                       <p className="relative m-0 max-w-[56ch] font-display text-[clamp(16px,1.7vw,24px)] font-bold leading-[1.3] tracking-[-0.01em]">
-                        {t(step)}
+                        {step}
                       </p>
                     </div>
                   </li>
@@ -686,7 +684,7 @@ export default function CaseStudy() {
         </div>
         <div className={container}>
           <CaseTitle
-            title={t(dict.caseStudy.outcome)}
+            title={dict.caseStudy.outcome}
             meta={`${project.status} · ${project.year}`}
             tone="pink"
           />
@@ -720,7 +718,7 @@ export default function CaseStudy() {
               </span>
 
               <p className="relative m-0 max-w-[28ch] p-[clamp(28px,3.6vw,56px)] pb-[clamp(22px,2.8vw,38px)] font-display text-[clamp(26px,3.4vw,52px)] font-bold leading-[1.12] tracking-[-0.03em]">
-                {t(project.outcome)}
+                {dash(project.outcome)}
               </p>
 
               <div className="flex items-center gap-4 bg-ink px-4 py-3 text-panel-foreground">
@@ -772,12 +770,12 @@ export default function CaseStudy() {
                     </span>
 
                     <strong className="relative font-display text-[clamp(42px,4.6vw,74px)] font-bold leading-[0.82] tracking-[-0.06em]">
-                      {metric.value}
+                      {dash(metric.value)}
                     </strong>
 
                     <span className="flex items-center gap-3">
                       <span className="border-2 border-current px-2 py-0.5 font-mono text-[10px] font-bold uppercase tracking-[0.1em]">
-                        {t(metric.label)}
+                        {dash(metric.label)}
                       </span>
                       <span
                         aria-hidden="true"
@@ -805,11 +803,11 @@ export default function CaseStudy() {
 
         <div className={`${container} relative z-10`}>
           <CaseTitle
-            title={t(dict.caseStudy.gallery)}
-            meta={`${project.gallery.length} ${t(dict.caseStudy.plates)}`}
+            title={dict.caseStudy.gallery}
+            meta={`${project.gallery.length} ${dict.caseStudy.plates}`}
             tone="blue"
             counter={String(project.gallery.length).padStart(2, "0")}
-            counterLabel={t(dict.caseStudy.plates)}
+            counterLabel={dict.caseStudy.plates}
           />
 
           <div className="grid grid-cols-2 gap-[clamp(30px,3.6vw,56px)] max-mob:grid-cols-1">
@@ -864,7 +862,7 @@ export default function CaseStudy() {
                       FIG. {plate}
                     </span>
                     <span className="min-w-0 flex-1 text-[11px] font-bold">
-                      {t(item.caption)}
+                      {dash(item.caption)}
                     </span>
                     <span
                       aria-hidden="true"
@@ -880,7 +878,7 @@ export default function CaseStudy() {
 
       <section className="relative border-b-3 border-ink py-[clamp(40px,6vw,80px)]">
         <TapeMarquee
-          items={[t(dict.caseStudy.allWork), profile.name.toUpperCase()]}
+          items={[dict.caseStudy.allWork, profile.name.toUpperCase()]}
         />
         <div className={`${container} pt-[clamp(20px,3vw,44px)]`}>
           <div className="grid grid-cols-2 gap-[clamp(18px,2.2vw,32px)] max-mob:grid-cols-1">
@@ -919,7 +917,7 @@ export default function CaseStudy() {
                           ←
                         </span>
                       )}
-                      {t(isPrev ? dict.caseStudy.previous : dict.caseStudy.next)}
+                      {isPrev ? dict.caseStudy.previous : dict.caseStudy.next}
                       {!isPrev && (
                         <span
                           aria-hidden="true"
@@ -960,10 +958,10 @@ export default function CaseStudy() {
 
           <div className="mt-14 flex flex-wrap items-center gap-5" data-reveal>
             <Button to="/#contact">
-              {t(dict.caseStudy.startProject)} <span aria-hidden="true">↗</span>
+              {dict.caseStudy.startProject} <span aria-hidden="true">↗</span>
             </Button>
             <Button to="/#work" variant="paper">
-              {t(dict.caseStudy.allWork)}
+              {dict.caseStudy.allWork}
             </Button>
             <span
               aria-hidden="true"

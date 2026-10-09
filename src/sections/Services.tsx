@@ -2,8 +2,9 @@ import { Fragment, type CSSProperties } from "react"
 import SectionHeading from "@/components/SectionHeading"
 import TechLogo from "@/components/TechLogo"
 import dict from "@/i18n/dict"
-import { accentColorClass, misprintColor, services } from "@/data/portfolio"
-import { useLang } from "@/i18n/use-lang"
+import { accentColorClass, misprintColor } from "@/data/portfolio"
+import { useContent } from "@/data/use-content"
+import EmptyState from "@/components/EmptyState"
 
 const ease = "ease-[cubic-bezier(0.32,0.72,0,1)]"
 
@@ -11,7 +12,7 @@ const tilt = ["rotate-[-1.2deg]", "rotate-[0.9deg]", "rotate-[-0.7deg]"]
 const offset = ["", "md:-translate-y-3", "md:translate-y-8"]
 
 export default function Services() {
-  const { t } = useLang()
+  const { services } = useContent()
 
   return (
     <section
@@ -34,16 +35,16 @@ export default function Services() {
           tone="yellow"
           title={
             <>
-              {t(dict.services.titlePart1)}
+              {dict.services.titlePart1}
               <span className="[text-shadow:5px_5px_0_var(--pink)]">
-                {t(dict.services.titleAccent)}
+                {dict.services.titleAccent}
               </span>
-              {t(dict.services.titlePart2)}
+              {dict.services.titlePart2}
             </>
           }
-          description={t(dict.services.description)}
+          description={dict.services.description}
           counter={String(services.length).padStart(2, "0")}
-          counterLabel={t(dict.services.counterLabel)}
+          counterLabel={dict.services.counterLabel}
         />
 
         <div className="grid grid-flow-dense grid-cols-1 gap-6 md:grid-cols-6 md:gap-8">
@@ -51,7 +52,7 @@ export default function Services() {
             const wide = index === 0
             return (
               <div
-                key={t(service.title)}
+                key={service.title}
                 data-reveal
                 className={`group relative ${
                   wide ? "md:col-span-6" : "md:col-span-3"
@@ -99,10 +100,10 @@ export default function Services() {
                   >
                     <div className={wide ? "md:max-w-[46ch]" : ""}>
                       <h3 className="m-0 font-display text-[clamp(30px,3.2vw,50px)] uppercase leading-[0.92] tracking-[-0.05em]">
-                        {t(service.title)}
+                        {service.title}
                       </h3>
                       <p className="mt-4 max-w-[52ch] text-sm leading-[1.6]">
-                        {t(service.description)}
+                        {service.description}
                       </p>
                       <ul className="mt-6 flex list-none flex-wrap gap-2 border-t-3 border-ink p-0 pt-4">
                         {service.tags.map((tag) => (
@@ -140,7 +141,7 @@ export default function Services() {
 
                     <ul
                       className="mt-auto flex list-none flex-wrap gap-2 p-0 pt-8 md:pt-0"
-                      aria-label={`${t(service.title)} toolkit`}
+                      aria-label={`${service.title} toolkit`}
                     >
                       {service.stack.map((slug, stackIndex) => (
                         <li key={slug}>
@@ -171,16 +172,24 @@ export default function Services() {
           })}
         </div>
 
+        {services.length === 0 && (
+          <div className="mt-[clamp(56px,7vw,104px)]">
+            <EmptyState
+              note={"No services listed yet — data comes from the API."}
+            />
+          </div>
+        )}
+
         <div className="mt-[clamp(56px,7vw,104px)]" data-reveal>
           <a
             href="#contact"
             className="group flex flex-col items-start justify-between gap-5 border-3 border-ink bg-ink px-6 py-6 text-panel-foreground transition-[translate,box-shadow] duration-200 hover:-translate-x-1 hover:-translate-y-1 hover:[box-shadow:10px_10px_0_var(--yellow)] sm:flex-row sm:items-center sm:px-8"
           >
             <span className="font-display text-[clamp(22px,2.8vw,38px)] font-bold uppercase leading-[0.95] tracking-[-0.03em]">
-              {t(dict.services.ctaTitle)}
+              {dict.services.ctaTitle}
             </span>
             <span className="flex items-center gap-3 text-[12px] font-bold uppercase tracking-[0.16em]">
-              {t(dict.services.ctaAction)}
+              {dict.services.ctaAction}
               <span
                 aria-hidden="true"
                 className={`grid size-9 place-items-center border-2 border-current transition-[rotate,translate] duration-300 ${ease} group-hover:-translate-y-1 group-hover:translate-x-1 group-hover:rotate-45`}

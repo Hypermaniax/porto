@@ -1,13 +1,11 @@
 import Button from "@/components/Button"
 import { useDocumentMeta } from "@/hooks/useDocumentMeta"
 import dict from "@/i18n/dict"
-import { useLang } from "@/i18n/use-lang"
 
 export default function NotFound() {
-  const { lang, t } = useLang()
   useDocumentMeta({
-    title: dict.notFound.title[lang],
-    description: t(dict.notFound.metaDescription),
+    title: dict.notFound.title,
+    description: dict.notFound.metaDescription,
   })
 
   return (
@@ -17,13 +15,13 @@ export default function NotFound() {
           404
         </span>
         <h1 className="m-0 max-w-[24ch] font-display text-[clamp(28px,4vw,52px)] font-bold uppercase leading-[0.95] tracking-[-0.05em]">
-          {t(dict.notFound.heading)}
+          {dict.notFound.heading}
         </h1>
         <p className="m-0 max-w-[48ch] text-[15px] leading-[1.6]">
-          {t(dict.notFound.body)}
+          {dict.notFound.body}
         </p>
         <Button to="/">
-          {t(dict.notFound.backHome)} <span aria-hidden="true">↗</span>
+          {dict.notFound.backHome} <span aria-hidden="true">↗</span>
         </Button>
       </div>
     </section>
