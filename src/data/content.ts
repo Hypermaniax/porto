@@ -182,3 +182,7 @@ export function fromBackend(data: BackendContent): Content {
 }
 
 export const ContentContext = createContext<Content | null>(null)
+
+// Konteks terpisah: apakah data konten sudah selesai diambil dari API.
+// Dipakai Intro supaya animasi pembuka menunggu konten siap dulu.
+export const ContentLoadedContext = createContext<boolean>(false)

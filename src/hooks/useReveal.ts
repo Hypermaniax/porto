@@ -1,7 +1,11 @@
 import { useEffect } from "react"
 
-export function useReveal() {
+export function useReveal(tunda = false) {
   useEffect(() => {
+    // tunda=true berarti tirai intro masih menutup: elemen jangan
+    // di-reveal dulu, dan pengamat baru bekerja setelah tunda=false.
+    if (tunda) return
+
     const prefersReduced = window.matchMedia(
       "(prefers-reduced-motion: reduce)",
     ).matches
@@ -46,5 +50,5 @@ export function useReveal() {
       mutations.disconnect()
       observer.disconnect()
     }
-  }, [])
+  }, [tunda])
 }

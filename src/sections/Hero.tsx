@@ -1,3 +1,4 @@
+import { useState } from "react"
 import AvailableBadge from "@/components/AvailableBadge"
 import Button from "@/components/Button"
 import Marquee from "@/components/ui/marquee"
@@ -12,6 +13,8 @@ const ease = "ease-[cubic-bezier(0.32,0.72,0,1)]"
 
 export default function Hero() {
   const { profile, marqueeItems } = useContent()
+  // foto lama tidak menimpa buruk lama: fade-in setelah bener-bener terunduh
+  const [fotoSiap, setFotoSiap] = useState(false)
   return (
     <section className="relative overflow-hidden" id="hero">
       <span
@@ -152,9 +155,10 @@ export default function Hero() {
               >
                 {profile.photo ? (
                   <img
-                    className="block h-[clamp(360px,44vw,600px)] w-full object-cover"
+                    className={`block h-[clamp(360px,44vw,600px)] w-full object-cover transition-opacity duration-700 ${fotoSiap ? "opacity-100" : "opacity-0"}`}
                     src={profile.photo}
                     alt={`${dict.hero.portraitAlt} ${profile.name}`}
+                    onLoad={() => setFotoSiap(true)}
                   />
                 ) : (
                   <div className="grid h-[clamp(360px,44vw,600px)] w-full place-items-center border-3 border-dashed border-ink bg-surface font-mono text-xs font-bold uppercase tracking-[0.14em] opacity-70">

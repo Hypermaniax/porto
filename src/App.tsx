@@ -1,3 +1,4 @@
+import { useState } from "react"
 import { Route, Routes, useLocation } from "react-router-dom"
 import Footer from "@/components/Footer"
 import Header from "@/components/Header"
@@ -14,10 +15,15 @@ import Home from "@/pages/Home"
 import NotFound from "@/pages/NotFound"
 import StyleGuide from "@/pages/StyleGuide"
 import AdminPage from "@/admin/AdminPage"
+import Intro from "@/components/Intro"
 
 function App() {
+  // tirai intro: "lepas" = mulai turun (animasi halaman boleh jalan),
+  // "selesai" = sudah tidak terlihat sama sekali (komponen dibongkar)
+  const [introSelesai, setIntroSelesai] = useState(false)
+  const [tiraiLepas, setTiraiLepas] = useState(false)
   const { profile, socials } = useContent()
-  useReveal()
+  useReveal(!tiraiLepas)
   useParallax()
 
   const personSchema = {
@@ -39,6 +45,12 @@ function App() {
         <AdminPage />
       ) : (
         <>
+          {!introSelesai && (
+            <Intro
+              onLepas={() => setTiraiLepas(true)}
+              onSelesai={() => setIntroSelesai(true)}
+            />
+          )}
           <a
             className="fixed left-2 top-2 z-[100] -translate-y-[150%] border-3 border-ink bg-yellow p-3 font-bold text-black focus:translate-y-0"
             href="#main"

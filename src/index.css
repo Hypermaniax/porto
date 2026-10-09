@@ -246,6 +246,49 @@
   will-change: transform;
 }
 
+/* ===== Intro (tirai pembuka) ===== */
+
+.intro-huruf {
+  animation: intro-rise 620ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes intro-rise {
+  from {
+    opacity: 0;
+    transform: translateY(64px) skewY(4deg);
+    filter: blur(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) skewY(0);
+    filter: blur(0);
+  }
+}
+
+.intro-kursor {
+  animation: intro-kedip 900ms steps(2, jump-none) infinite;
+}
+
+@keyframes intro-kedip {
+  50% {
+    opacity: 0;
+  }
+}
+
+/* selama tirai intro tampil: animasi hero ditahan, lalu dilepas
+   PAS tirai mulai turun -> mekar bersamaan dengan tirai yang jatuh */
+.intro-aktif .animate-hero-rise,
+.intro-aktif .animate-hero-wipe {
+  animation: none;
+}
+
+/* tirai berangkat: seluruh panel bergeser ke BAWAH (menutup dari atas),
+   strip kuning di tepi atas memberi kesan "wipe" brutal */
+.intro-lepas {
+  transform: translateY(103%);
+  transition: transform 700ms cubic-bezier(0.76, 0, 0.24, 1);
+}
+
 .text-hollow {
   color: transparent;
   -webkit-text-stroke: 1.6px var(--panel-foreground);
@@ -283,8 +326,15 @@
   .animate-hero-rise,
   .animate-hero-wipe,
   .animate-spin-slow,
-  .animate-ping {
+  .animate-ping,
+  .intro-huruf,
+  .intro-kursor {
     animation: none;
+  }
+
+  /* tirai berangkat instan (prefers-reduced-motion) */
+  .intro-lepas {
+    transition-duration: 0.01ms;
   }
 
   *,
