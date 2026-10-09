@@ -2,24 +2,27 @@ import { useEffect, useLayoutEffect, useRef, useState } from "react"
 import { useContent, useContentLoaded } from "@/data/use-content"
 
 /**
- * Intro = tirai pembuka bergaya brutalist.
+ * Intro = tirai pembuka BRUTALIS.
+ * (arah gaya mengikuti ui-ux-pro-max: raw, kontras tinggi, asimetris,
+ * sudut tajam, border kasat mata, tanpa halus-halus)
  *
- * Tujuannya bukan sekadar "loading", tapi momen welcome: menutupi
- * jeda pengambilan konten (fetch ke API) supaya foto/tagline tidak
+ * Momen welcome murni animasi (tanpa tulisan loading/memuat, tanpa bar
+ * kemajuan): menutupi jeda pengambilan konten supaya foto/tagline tidak
  * muncul telat di depan pengunjung.
  *
- * Alur:
- *  1. Huruf wordmark + kicker muncul staggered (CSS intro-rise).
- *  2. Persentase + bar berjalan (requestAnimationFrame, berhenti
- *     di 88% selama konten belum siap).
- *  3. Konten siap (atau fetch selesai/gagal) DAN waktu minimal
- *     tercapai -> progres ke 100% -> tirai berangkat (CSS .intro-lepas)
- *  4. "prefers-reduced-motion" -> intro hampir instan.
+ * Isi panggung:
+ *  - nama raksasa gaya hero di index: miring + drop-shadow biru,
+ *    tanpa garis bawah (huruf pop staggered)
+ *  - strip marquee miring melintas di belakang wordmark
+ *  - stiker "tape" + stiker diamond berputar di pojok
  *
- * Durasi minimal tetap dipakai walau fetch instan, agar animasi
- * terasa disengaja (bukan kedip email satu detik).
+ * Alur:
+ *  1. Semua elemen pop staggered pop (CSS intro-rise / intro-pop).
+ *  2. Konten siap (atau fetch selesai/gagal) DAN waktu minimal
+ *     tercapai -> tirai berangkat (CSS .intro-lepas).
+ *  3. "prefers-reduced-motion" -> intro hampir instan.
  */
-const MIN_MS = 1600 // durasi minimal intro terlihat
+const MIN_MS = 1700 // durasi minimal intro terlihat
 const EXIT_MS = 750 // durasi animasi tirai berangkat
 
 export default function Intro({
@@ -35,13 +38,10 @@ export default function Intro({
   const { profile } = useContent()
   const loaded = useContentLoaded()
 
-  const [persen, setPersen] = useState(0)
   const [lepas, setLepas] = useState(false)
 
-  // rAF + ref supaya loop animasi tidak memicu re-render efek.
   // titik nol waktu disimpan di ref (diinisialisasi saat efek pertama
   // jalan) supaya efek yang ter-restart tidak mengulang durasi intro.
-  const progres = useRef(0)
   const mulaiRef = useRef<number | null>(null)
   const selesaiDipanggil = useRef(false)
 
@@ -52,36 +52,32 @@ export default function Intro({
     const minMs = window.matchMedia("(prefers-reduced-motion: reduce)").matches
       ? 250
       : MIN_MS
-    let raf = 0
-    const loop = (t: number) => {
-      const lewat = t - mulai
-      const target = loaded && lewat >= minMs ? 100 : Math.min(88, progres.current + 1.4)
-      // gerak halus: mendekati target, lompatan kecil stabil
-      progres.current += (target - progres.current) * 0.08
-      setPersen(Math.round(progres.current))
 
-      if (progres.current >= 99.5 && loaded && lewat >= minMs) {
-        setLepas(true)
-        onLepas?.()
-        // tirai sudah berangkat -> bebaskan halaman
-        window.setTimeout(() => {
-          if (!selesaiDipanggil.current) {
-            selesaiDipanggil.current = true
-            onSelesai()
-          }
-        }, EXIT_MS)
-        return
-      }
-      raf = requestAnimationFrame(loop)
+    const mulaiBerangkat = () => {
+      setLepas(true)
+      onLepas?.()
+      // tirai sudah berangkat -> bebaskan halaman
+      window.setTimeout(() => {
+        if (!selesaiDipanggil.current) {
+          selesaiDipanggil.current = true
+          onSelesai()
+        }
+      }, EXIT_MS)
     }
-    raf = requestAnimationFrame(loop)
-    return () => cancelAnimationFrame(raf)
+
+    const ticker = window.setInterval(() => {
+      if (loaded && performance.now() - mulai >= minMs) {
+        window.clearInterval(ticker)
+        mulaiBerangkat()
+      }
+    }, 100)
+    return () => window.clearInterval(ticker)
   }, [loaded, onLepas, onSelesai])
 
   // gerbang animasi halaman: selama kelas ini ada di <html>,
   // animasi hero (hero-rise/hero-wipe) tidak berjalan.
-  // Kelas dilepas saat intro unmount = tirai SUDAH tertutup penuh,
-  // dan baru saat itulah animasi index dimulai.
+  // Kelas dilepas PAS tirai mulai turun, agar animasi index
+  // mekar bersamaan dengan tirai yang jatuh.
   useLayoutEffect(() => {
     if (!lepas) document.documentElement.classList.add("intro-aktif")
   }, [lepas])
@@ -101,68 +97,105 @@ export default function Intro({
     }
   }, [])
 
-  const wordmark = (profile.wordmark || profile.initials || "HELLO").toUpperCase()
-  const huruf = Array.from(wordmark)
+  // gaya nama seperti di index, tapi cukup nama depan saja
+  const nama = (profile.firstName || profile.wordmark || "NIKO").toUpperCase()
+  const huruf = Array.from(nama)
+
+  // oranye strip marquee: teks digandakan supaya loop translateX(-50%) mulus
+  const jalur = "WELCOME ✺ PORTFOLIO ✺ FULLSTACK ✺ ".repeat(6)
 
   return (
     <div
-      className={`fixed inset-0 z-[300] flex flex-col justify-between overflow-hidden bg-panel text-panel-foreground ${lepas ? "intro-lepas" : ""}`}
+      className={`fixed inset-0 z-[300] flex flex-col overflow-hidden bg-panel text-panel-foreground ${lepas ? "intro-lepas" : ""}`}
       role="status"
-      aria-label="Memuat portofolio"
+      aria-label="Pembuka situs"
     >
+      {/* tekstur perdu grid diagonal - "grid kasat" ala brutal */}
+      <span
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 opacity-[0.06]"
+        style={{
+          backgroundImage:
+            "repeating-linear-gradient(45deg, currentColor 0 1px, transparent 1px 22px)",
+        }}
+      />
+
       {/* strip kuning di tepi ATAS - seret kuning saat tirai berangkat ke bawah */}
-      <span className="pointer-events-none absolute inset-x-0 top-0 h-5 border-b-3 border-ink bg-yellow" />
+      <span className="pointer-events-none absolute inset-x-0 top-0 z-20 h-5 border-b-3 border-ink bg-yellow" />
 
-      {/* baris atas */}
-      <div className="intro-sel grid-flow flex items-center justify-between px-[var(--pad)] pt-6 font-mono text-[11px] uppercase tracking-[0.2em]">
-        <span>
-          Welcome <span className="opacity-50">// Portfolio.</span>
-        </span>
-        <span className="intro-kursor inline-block h-3 w-2 bg-panel-foreground" />
-      </div>
-
-      {/* tengah: wordmark raksasa + peran */}
-      <div className="px-[var(--pad)]">
-        <h1 className="flex select-none flex-wrap items-baseline gap-x-4 font-display text-[clamp(64px,16vw,220px)] font-bold leading-none tracking-tight">
-          {huruf.map((h, i) => (
-            <span
-              key={i}
-              aria-hidden="true"
-              className="intro-huruf inline-block text-yellow"
-              style={{ animationDelay: `${i * 90}ms` }}
-            >
-              {h}
-            </span>
-          ))}
+      {/* baris atas: chip sambutan miring + kursor kedip */}
+      <div
+        className="intro-pop relative z-10 mx-[var(--pad)] mt-7 flex items-start justify-between"
+        style={{ animationDelay: "80ms", ["--rot" as never]: "-2deg" }}
+      >
+        <span className="relative -rotate-2 border-3 border-ink bg-yellow px-3 py-2 font-mono text-[11px] font-bold uppercase tracking-[0.2em] text-black shadow-hard-xs">
+          {/* "tape" perekat di kedua ujung stiker */}
           <span
             aria-hidden="true"
-            className="intro-huruf inline-block text-panel-foreground"
-            style={{ animationDelay: `${huruf.length * 90}ms` }}
-          >
-            .
-          </span>
-          <span className="sr-only">{wordmark}</span>
-        </h1>
-        <p
-          className="intro-huruf mt-3 font-mono text-xs uppercase tracking-[0.18em] opacity-60"
-          style={{ animationDelay: `${huruf.length * 90 + 180}ms` }}
-        >
-          {profile.role || "Fullstack Developer"} — Komponen dimuat…
-        </p>
+            className="absolute -top-2.5 left-1/2 h-4 w-12 -translate-x-1/2 -rotate-[8deg] border-2 border-ink/20 bg-panel-foreground/25"
+          />
+          Welcome // Portfolio.
+        </span>
+        <span className="intro-kursor mt-3 inline-block h-3.5 w-2.5 bg-panel-foreground" />
       </div>
 
-      {/* bawah: bar + persen */}
-      <div className="px-[var(--pad)] pb-8">
-        <div className="mx-auto mb-3 flex max-w-3xl items-center justify-between font-mono text-[11px] uppercase tracking-[0.2em]">
-          <span>{loaded ? "Konten siap" : "Mengambil konten…"}</span>
-          <span data-testid="intro-persen">{String(persen).padStart(3, "0")}%</span>
+      {/* strip marquee miring melintas DI BELAKANG wordmark */}
+      <div
+        aria-hidden="true"
+        className="intro-pop pointer-events-none absolute left-[-6%] top-[47%] z-0 w-[112%] -rotate-[3.5deg] border-y-3 border-ink bg-yellow py-2 text-black"
+        style={{ animationDelay: "420ms", ["--rot" as never]: "-3.5deg" }}
+      >
+        <div className="flex w-max animate-marquee whitespace-nowrap font-mono text-[clamp(14px,2.2vw,26px)] font-bold uppercase tracking-[0.22em]">
+          <span className="pr-6">{jalur}</span>
+          <span className="pr-6">{jalur}</span>
         </div>
-        <div className="mx-auto h-6 max-w-3xl border-3 border-ink bg-panel-foreground/10">
-          <div
-            className="h-full border-r-3 border-ink bg-yellow"
-            style={{ width: `${persen}%` }}
-          />
+      </div>
+
+      {/* tengah: wordmark raksasa DEMPEM + peran */}
+      <div className="relative z-10 flex flex-1 items-center px-[var(--pad)]">
+        <div className="-translate-y-[5.5rem] max-mob:-translate-y-14">
+          <h1 className="relative -rotate-[0.8deg] flex select-none flex-wrap items-baseline gap-x-[0.08em] font-display text-[clamp(56px,12vw,180px)] font-bold leading-[0.92] tracking-[-0.06em] [text-shadow:6px_6px_0_var(--blue)]">
+            {huruf.map((h, i) => (
+              <span
+                key={i}
+                aria-hidden="true"
+                className={`intro-huruf inline-block ${h === " " ? "w-[0.25em]" : "text-panel-foreground"}`}
+                style={{ animationDelay: `${i * 70}ms` }}
+              >
+                {h === " " ? "\u00A0" : h}
+              </span>
+            ))}
+            <span className="sr-only">{nama}</span>
+          </h1>
+          <p
+            className="intro-huruf mt-7 inline-block -rotate-1 border-x-3 border-panel-foreground/40 px-3 py-1 font-mono text-xs uppercase tracking-[0.3em] opacity-80"
+            style={{ animationDelay: `${huruf.length * 85 + 150}ms` }}
+          >
+            {profile.role || "Fullstack Developer"}
+          </p>
         </div>
+      </div>
+
+      {/* stiker diamond berputar di pojok kanan bawah */}
+      <div
+        className="intro-pop absolute bottom-10 right-[var(--pad)] z-10 hidden size-28 place-items-center border-3 border-ink bg-pink shadow-hard-sm max-mob:size-20 mob:grid"
+        style={{ animationDelay: "560ms", rotate: "12deg", ["--rot" as never]: "12deg" }}
+        aria-hidden="true"
+      >
+        <span className="animate-spin-slow font-display text-4xl font-bold text-black [animation-direction:reverse]">
+          ✺
+        </span>
+      </div>
+
+      {/* baris bawah: cap tangan kecil */}
+      <div
+        className="intro-pop relative z-10 mx-[var(--pad)] mb-7 flex items-end justify-between font-mono text-[10px] uppercase tracking-[0.24em] opacity-75"
+        style={{ animationDelay: "700ms", ["--rot" as never]: "2deg" }}
+      >
+        <span className="rotate-1 border-3 border-panel-foreground/50 px-2.5 py-1.5">
+          NO LOADING. JUST ENTRANCE.
+        </span>
+        <span className="-rotate-1 font-bold">EST. 2026</span>
       </div>
     </div>
   )

@@ -249,19 +249,43 @@
 /* ===== Intro (tirai pembuka) ===== */
 
 .intro-huruf {
-  animation: intro-rise 620ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation: intro-rise 560ms cubic-bezier(0.7, -0.28, 0.3, 1.4) both;
 }
 
 @keyframes intro-rise {
-  from {
+  0% {
     opacity: 0;
-    transform: translateY(64px) skewY(4deg);
-    filter: blur(10px);
+    transform: translateY(110px) rotate(7deg) skewX(-8deg);
+    filter: blur(14px);
   }
-  to {
+  78% {
     opacity: 1;
-    transform: translateY(0) skewY(0);
     filter: blur(0);
+  }
+  88% {
+    transform: translateY(-14px) rotate(-2deg);
+  }
+  100% {
+    transform: translateY(0) rotate(0) skewX(0);
+  }
+}
+
+/* pop stiker: dari kecil miring, ngeper, lalu menetap di sudut --rot */
+.intro-pop {
+  animation: intro-pop 420ms cubic-bezier(0.85, 0, 0.15, 1) both;
+}
+
+@keyframes intro-pop {
+  0% {
+    opacity: 0;
+    transform: scale(0.4) rotate(calc(var(--rot, 0deg) - 26deg));
+  }
+  70% {
+    opacity: 1;
+    transform: scale(1.12) rotate(calc(var(--rot, 0deg) + 4deg));
+  }
+  100% {
+    transform: scale(1) rotate(var(--rot, 0deg));
   }
 }
 
