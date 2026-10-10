@@ -880,7 +880,7 @@ export default function CaseStudy() {
                       </span>
                       <span
                         aria-hidden="true"
-                        className="absolute right-4 top-4 z-30 font-mono text-2xl font-bold leading-none opacity-50"
+                        className="absolute right-4 top-4 z-30 font-mono text-2xl font-bold leading-none opacity-50 transition-transform duration-200 group-hover:rotate-90 group-hover:opacity-100"
                       >
                         +
                       </span>
@@ -907,6 +907,12 @@ export default function CaseStudy() {
                           >
                             <div className="relative overflow-hidden border-3 border-ink">
                               <ProjectVisual type={item.visual} image={item.image} />
+                              <span
+                                aria-hidden="true"
+                                className="pointer-events-none absolute bottom-3 left-3 z-30 flex -rotate-2 translate-y-2 items-center gap-1.5 border-3 border-ink bg-yellow px-2.5 py-1 font-mono text-[10px] font-bold uppercase tracking-[0.12em] text-ink opacity-0 shadow-[3px_3px_0_var(--ink)] transition-[opacity,translate] duration-200 group-hover:translate-y-0 group-hover:opacity-100"
+                              >
+                                klik <span className="text-[13px] leading-none">✺</span> full image
+                              </span>
                             </div>
                           </button>
                         ) : (
