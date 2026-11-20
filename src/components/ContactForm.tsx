@@ -1,10 +1,4 @@
-import {
-  useEffect,
-  useRef,
-  useState,
-  type ChangeEvent,
-  type FormEvent,
-} from "react"
+import { useState, type ChangeEvent, type FormEvent } from "react"
 import Button from "@/components/Button"
 import {
   Field,
@@ -41,11 +35,6 @@ export default function ContactForm() {
   const [values, setValues] = useState<Values>(initialValues)
   const [errors, setErrors] = useState<Errors>({})
   const [status, setStatus] = useState<Status>("idle")
-  const timeoutRef = useRef<number | undefined>(undefined)
-
-  useEffect(() => {
-    return () => window.clearTimeout(timeoutRef.current)
-  }, [])
 
   const handleChange = (field: Field_, value: string) => {
     setValues((prev) => ({ ...prev, [field]: value }))
@@ -58,7 +47,7 @@ export default function ContactForm() {
     setErrors((prev) => ({ ...prev, [field]: validate(field, values[field]) }))
   }
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
 
     const nextErrors: Errors = {}
@@ -71,7 +60,17 @@ export default function ContactForm() {
     if (Object.keys(nextErrors).length > 0) return
 
     setStatus("sending")
-    timeoutRef.current = window.setTimeout(() => {
+    try {
+      const res = await fetch(
+        `${import.meta.env.VITE_API_URL}/api/contact`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(values),
+        },
+      )
+      if (!res.ok) throw new Error(`HTTP ${res.status}`)
+
       setStatus("sent")
       setValues(initialValues)
       toast.add({
@@ -79,7 +78,14 @@ export default function ContactForm() {
         description: dict.form.toastDescription,
         type: "success",
       })
-    }, 700)
+    } catch {
+      setStatus("idle")
+      toast.add({
+        title: dict.form.errorTitle,
+        description: dict.form.errorDescription,
+        type: "error",
+      })
+    }
   }
 
   const changeProps = (field: Field_) => ({

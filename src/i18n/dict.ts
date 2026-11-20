@@ -119,6 +119,8 @@ const dict = {
     send: "SEND MESSAGE",
     toastTitle: "MESSAGE SENT — NICE!",
     toastDescription: "Thanks! I got your message and will reply within a day.",
+    errorTitle: "MESSAGE FAILED TO SEND",
+    errorDescription: "Something went wrong — email me directly at nikoagustio@gmail.com, or try again.",
   },
   footer: {
     elsewhere: "Elsewhere",
